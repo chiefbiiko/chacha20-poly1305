@@ -12,7 +12,7 @@ function xor(
   }
 }
 
-export function chaCha20Encrypt(
+export function chaCha20Cipher(
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,

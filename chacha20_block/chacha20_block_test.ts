@@ -23,9 +23,9 @@ export function loadTestVector(): {
 
 test(function chaCha20Blocking(): void {
   const { key, nonce, counter, expected } = loadTestVector();
-  const keyChunk: Uint8Array = new Uint8Array(64);
-  chaCha20Block(key, nonce, counter, keyChunk);
-  assert.equal(keyChunk, expected);
+  const actual: Uint8Array = new Uint8Array(64);
+  chaCha20Block(key, nonce, counter, actual);
+  assert.equal(actual, expected);
 });
 
 runIfMain(import.meta);
