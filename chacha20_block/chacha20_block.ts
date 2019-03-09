@@ -1,25 +1,11 @@
 import {
-  rotateLeft,
+  chaCha20QuarterRound
+} from "./../chacha20_quarter_round/chacha20_quarter_round.ts";
+
+import {
   numberToFourLittleEndianBytes,
   fourLittleEndianBytesToNumber
 } from "./../util/util.ts";
-
-function quarterRound(
-  state: Uint32Array,
-  a: number,
-  b: number,
-  c: number,
-  d: number
-): void {
-  state[a] += state[b];
-  state[d] = rotateLeft(state[d] ^ state[a], 16);
-  state[c] += state[d];
-  state[b] = rotateLeft(state[b] ^ state[c], 12);
-  state[a] += state[b];
-  state[d] = rotateLeft(state[d] ^ state[a], 8);
-  state[c] += state[d];
-  state[b] = rotateLeft(state[b] ^ state[c], 7);
-}
 
 export function chaCha20Block(
   key: Uint8Array,
@@ -59,14 +45,14 @@ export function chaCha20Block(
   const initialState: Uint32Array = Uint32Array.from(state);
   let i: number;
   for (i = 0; i < 10; ++i) {
-    quarterRound(state, 0, 4, 8, 12);
-    quarterRound(state, 1, 5, 9, 13);
-    quarterRound(state, 2, 6, 10, 14);
-    quarterRound(state, 3, 7, 11, 15);
-    quarterRound(state, 0, 5, 10, 15);
-    quarterRound(state, 1, 6, 11, 12);
-    quarterRound(state, 2, 7, 8, 13);
-    quarterRound(state, 3, 4, 9, 14);
+    chaCha20QuarterRound(state, 0, 4, 8, 12);
+    chaCha20QuarterRound(state, 1, 5, 9, 13);
+    chaCha20QuarterRound(state, 2, 6, 10, 14);
+    chaCha20QuarterRound(state, 3, 7, 11, 15);
+    chaCha20QuarterRound(state, 0, 5, 10, 15);
+    chaCha20QuarterRound(state, 1, 6, 11, 12);
+    chaCha20QuarterRound(state, 2, 7, 8, 13);
+    chaCha20QuarterRound(state, 3, 4, 9, 14);
   }
   for (i = 0; i < 16; ++i) {
     state[i] += initialState[i];
