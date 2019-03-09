@@ -1,6 +1,6 @@
 import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { poly1305KeyGen } from "./poly1305_key_gen.ts";
-import { hex2bin } from "./../util/util.ts"";
+import { hex2bin } from "./../util/util.ts";
 
 const { readFileSync } = Deno;
 

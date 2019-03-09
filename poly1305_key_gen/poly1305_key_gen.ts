@@ -1,5 +1,7 @@
-import { chaCha20Block } from "./../chaCha20_block/chaCha20_block.ts";
+import { chaCha20Block } from "./../chaCha20_block/chacha20_block.ts";
 
 export function poly1305KeyGen(key: Uint8Array, nonce: Uint8Array): Uint8Array {
-  return chaCha20Block(key, nonce, 0).subarray(0, 32);
+  const out: Uint8Array = new Uint8Array(64);
+  chaCha20Block(key, nonce, 0, out);
+  return out.subarray(0, 32);
 }
