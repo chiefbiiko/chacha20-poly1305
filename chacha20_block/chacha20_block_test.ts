@@ -23,7 +23,8 @@ export function loadTestVector(): {
 
 test(function chaCha20Blocking(): void {
   const { key, nonce, ibc, expected } = loadTestVector();
-  const actual: Uint8Array = chaCha20Block(key, nonce, ibc);
+  const actual: Uint8Array = new Uint8Array(64);
+  chaCha20Block(key, nonce, ibc, actual);
   assert.equal(actual, expected);
 });
 
