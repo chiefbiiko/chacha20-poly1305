@@ -10,7 +10,9 @@ export function loadTestVector(): {
   expected: Uint8Array;
 } {
   const testVector = JSON.parse(
-    new TextDecoder().decode(readFileSync("./test_vector.json"))
+    new TextDecoder().decode(
+      readFileSync("./poly1305_key_gen_test_vector.json")
+    )
   );
   return {
     key: hex2bin(testVector.key),
@@ -21,8 +23,8 @@ export function loadTestVector(): {
 
 test(function poly1305KeyGeneration(): void {
   const { key, nonce, expected } = loadTestVector();
-  const actual: Uint8Array = poly1305KeyGen(key, nonce);
-  assert.equal(actual, expected);
+  const otk: Uint8Array = poly1305KeyGen(key, nonce);
+  assert.equal(otk, expected);
 });
 
 runIfMain(import.meta);

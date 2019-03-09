@@ -28,16 +28,16 @@ export function chaCha20Block(
   out: Uint8Array
 ): void {
   if (key.length !== 32) {
-    throw new Error("key must have 32 bytes");
+    throw new TypeError("key must have 32 bytes");
   }
   if (nonce.length !== 12) {
-    throw new Error("nonce must have 12 bytes");
+    throw new TypeError("nonce must have 12 bytes");
   }
   if (counter < 0 || counter % 1) {
-    throw new Error("counter must be an unsigned integer");
+    throw new TypeError("counter must be an unsigned integer");
   }
   if (out.length !== 64) {
-    throw new Error("out must have 64 bytes");
+    throw new TypeError("out must have 64 bytes");
   }
   const state = new Uint32Array(16);
   state[0] = 0x61707865;
