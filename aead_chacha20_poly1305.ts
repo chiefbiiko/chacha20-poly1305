@@ -4,10 +4,10 @@ import { zeroPad16 } from "./zero_pad16/zero_pad16.ts";
 import { poly1305 } from "./poly1305/poly1305.ts";
 import { numberToLittleEndianBytes } from "./util/util.ts";
 
-/** Last 12 bytes of a 13-char timestamp (ms) */
-function defaultNonce() {
-  return new TextEncoder().encode(String(Date.now()).slice(-12));
-}
+// /** Last 12 bytes of a 13-char timestamp (ms) */
+// function defaultNonce() {
+//   return new TextEncoder().encode(String(Date.now()).slice(-12));
+// }
 
 /**
 chacha20_aead_encrypt(aad, key, iv, constant, plaintext):
@@ -22,20 +22,46 @@ chacha20_aead_encrypt(aad, key, iv, constant, plaintext):
     return (ciphertext, tag)
 */
 
-export function aeadChaCha20Poly1305Encrypt(
+export function aeadChaCha20Poly1305Seal(
   key: Uint8Array,
-  nonce: Uint8Array = defaultNonce(),
+  iv: Uint8Array,
+  constant: Uint8Array,
   plaintext: Uint8Array,
   aad: Uint8Array
-): { ciphertext: Uint8Array, tag: Uint8Array } {
+): { ciphertext: Uint8Array; tag: Uint8Array } {
   if (key.length !== 32) {
     throw new TypeError("key must have 32 bytes");
   }
-  if (nonce.length !== 12) {
-    throw new TypeError("nonce must have 12 bytes");
+  if (iv.length !== 8) {
+    throw new TypeError("iv must have 8 bytes");
   }
+  if (constant.length !== 4) {
+    throw new TypeError("constant must have 4 bytes");
+  }
+  const nonce: Uint8Array = new Uint8Array(12);
+  // TODO: write nonce in little endian order
+  nonce.set(constant, 0);
+  nonce.set(iv, 4);
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const ciphertext: Uint8Array = chaCha20Cipher(key, nonce, 1, plaintext);
-  
-  return { ciphertext, tag };
+  const paddedCiphertext: Uint8Array = zeroPad16(ciphertext);
+  const paddedAad: Uint8Array = zeroPad16(aad);
+  const pac: Uint8Array = new Uint8Array(
+    paddedAad.length + paddedCiphertext.length + 16
+  );
+  pac.set(paddedAad, 0);
+  pac.set(paddedCiphertext, paddedAad.length);
+  numberToLittleEndianBytes(
+    aad.length,
+    pac,
+    8,
+    paddedAad.length + paddedCiphertext.length
+  );
+  numberToLittleEndianBytes(
+    ciphertext.length,
+    pac,
+    8,
+    paddedAad.length + paddedCiphertext.length + 8
+  );
+  return { ciphertext, tag: poly1305(otk, pac) };
 }

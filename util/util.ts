@@ -52,9 +52,11 @@ export function bigIntToLittleEndianBytes(
 export function numberToLittleEndianBytes(
   v: number,
   out: Uint8Array,
-  n: number
+  n: number,
+  o: number = 0
 ): void {
-  for (let i: number = 0; i < n; ++i) {
+  const end: number = o + n;
+  for (let i: number = o; i < end; ++i) {
     out[i] = v & 0xff;
     v >>= 8;
   }

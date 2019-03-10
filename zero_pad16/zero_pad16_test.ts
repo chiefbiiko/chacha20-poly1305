@@ -6,7 +6,7 @@ test(function zeroPadToMultiplesOf16(): void {
   const y: Uint8Array = zeroPad16(x);
   assert(y.length % 16 === 0);
   assert.equal(y.subarray(0, x.length), x);
-  assert.equal(y.subarray(x.length, y.length), new Uint8Array(6));
+  assert(y.subarray(x.length, y.length).every((b: number) => b === 0x00));
 });
 
 runIfMain(import.meta);
