@@ -35,10 +35,6 @@ export function bigIntToNumber(b: bigint): number {
   return parseInt(String(b));
 }
 
-function bigIntByteLength(b: bigint): number {
-  return Math.ceil(b.toString(16).length / 2);
-}
-
 const BIGINT_BYTE_MASK: bigint = BigInt(0xff);
 const BIGINT_EIGHT: bigint = BigInt(8);
 
@@ -47,22 +43,20 @@ export function bigIntToLittleEndianBytes(
   out: Uint8Array,
   n: number
 ): void {
-  const byteLength: number = n || bigIntByteLength(b);
-  if (out.length !== byteLength) {
-    throw new TypeError(`out must have ${byteLength} bytes`)
-  }
-  for (let i: number = 0; i < byteLength; ++i) {
+  for (let i: number = 0; i < n; ++i) {
     out[i] = bigIntToNumber(b & BIGINT_BYTE_MASK);
     b = b >> BIGINT_EIGHT;
   }
 }
 
 export function swapBigInt(b: bigint): bigint {
-  // const byteLength: number = bigIntByteLength(b);
-  // const bytes: Uint8Array = new Uint8Array(byteLength);
-  // bigIntToLittleEndianBytes(b, bytes, byteLength);
-  // return littleEndianBytesToBigInt(bytes);
-  return BigInt(`0x${b.toString(16).match(/../g).reverse().join('')}`);
+  return BigInt(
+    `0x${b
+      .toString(16)
+      .match(/../g)
+      .reverse()
+      .join("")}`
+  );
 }
 
 export function hex2bin(hex: string): Uint8Array {
@@ -80,12 +74,4 @@ export function hex2bin(hex: string): Uint8Array {
     buf[i] = parsed;
   }
   return buf;
-}
-
-export function inspectState(state: Uint32Array, msg: string = ""): void {
-  let s: string = "";
-  for (let i: number = 0; i < 16; ++i) {
-    s += `${state[i].toString(16)} `;
-  }
-  console.log("\n", msg, s, "\n");
 }
