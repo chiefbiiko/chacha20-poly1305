@@ -26,6 +26,8 @@ function writeBlock(msg: Uint8Array, o: number, end: number, block: Uint8Array):
 //   return a - q * b;
 // }
 
+export const PRIME1305: bigint = 2n ** 130n - 5n;
+
 export function poly1305(
   otk: Uint8Array,
   msg: Uint8Array,
@@ -40,21 +42,23 @@ export function poly1305(
   const r: bigint = poly1305ClampBigInt(
     littleEndianBytesToBigInt(otk.subarray(0, 16))
   );
-console.error("r", r.toString(16))
+// console.error("r", r.toString(16))
   const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32));
-  const prime: bigint = BigInt(2n ** 130n - 5n);
-  let acc: bigint = 0n;
   const block: Uint8Array = new Uint8Array(17);
+  let acc: bigint = 0n;
+  let b: bigint;
   const loopEnd: number = Math.ceil(msg.length / 16);
   for (let i: number = 1; i <= loopEnd; ++i) {
     writeBlock(msg, (i - 1) * 16, i * 16, block);
-console.error(`\nblock`, Array.from(block).map(b=>b.toString(16)).join(''), "\n")
-    const b: bigint = littleEndianBytesToBigInt(block);
-console.error("\nswapBigInt(acc + b).toString(16)", swapBigInt(acc + b).toString(16), "\n")
-console.error("\n(r * swapBigInt(acc + b)).toString(16)", (r * swapBigInt(acc + b)).toString(16), "\n")
-    acc = (r * swapBigInt(acc + b)) % prime;
+// console.error(`\nblock`, Array.from(block).map(b=>b.toString(16)).join(''), "\n")
+    b = swapBigInt(littleEndianBytesToBigInt(block));
+console.error("\nblock b.toString(16)", b.toString(16), "\n")
+// console.error("\nswapBigInt(acc + b).toString(16)", swapBigInt(acc + b).toString(16), "\n")
+// console.error("\n(r * swapBigInt(acc + b)).toString(16)", (r * swapBigInt(acc + b)).toString(16), "\n")
+    acc = (r * (acc + b)) % PRIME1305;
 console.error(`\ni: ${i}; acc: ${acc.toString(16)}\n`)
   }
   acc += s;
+  // acc = acc + s;
   bigIntToLittleEndianBytes(acc, out, 16);
 }
