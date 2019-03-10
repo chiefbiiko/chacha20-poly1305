@@ -1,46 +1,60 @@
 import { poly1305ClampBigInt } from "./../poly1305_clamp/poly1305_clamp.ts";
 import {
   littleEndianBytesToBigInt,
-  bigintToSixteenLittleEndianBytes
+  bigIntToLittleEndianBytes,
+  swapBigInt,
+  // bigIntToNumber
 } from "./../util/util.ts";
 
-/*
-poly1305_mac(msg, key):
-   r = le_bytes_to_num(key[0..15])
-   clamp(r)
-   s = le_bytes_to_num(key[16..31])
-   a = 0
-   p = (1<<130)-5
-   for i=1 upto ceil(msg length in bytes / 16)
-      n = le_bytes_to_num(msg[((i-1)*16)..(i*16)] | [0x01])
-      a += n
-      a = (r * a) % p
-      end
-   a += s
-   return num_to_16_le_bytes(a)
-   end
-*/
+function writeBlock(msg: Uint8Array, o: number, end: number, block: Uint8Array): void {
+  let loopEnd: number = 17;
+  let j: number = end - 1;
+  const exc: number = end - msg.length;
+  if (exc > 0) {
+    loopEnd -= exc;
+    j = end - exc - 1;
+    block.fill(0x00, 17 - exc, block.length);
+  }
+  block[0] = 0x01;
+  for (let i: number = 1; i < loopEnd; ++i, --j) {
+    block[i] = msg[j];
+  }
+}
+
+// function mod(a: bigint, b: bigint): bigint {
+//   const q: bigint = BigInt(Math.floor(bigIntToNumber(a / b)));
+//   return a - q * b;
+// }
 
 export function poly1305(
   otk: Uint8Array,
   msg: Uint8Array,
   out: Uint8Array
 ): void {
+  if (otk.length !== 32) {
+    throw new TypeError("otk must have 32 bytes")
+  }
   if (out.length !== 16) {
     throw new TypeError("out must have 16 bytes");
   }
-  const r: bigint = poly1305ClampBigInt(littleEndianBytesToBigInt(otk.subarray(0, 16), 0, 16));
-  const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32), 0, 16);
-  const prime: bigint = BigInt(2 ** 130 - 5);
-  let acc: bigint = BigInt(0);
+  const r: bigint = poly1305ClampBigInt(
+    littleEndianBytesToBigInt(otk.subarray(0, 16))
+  );
+console.error("r", r.toString(16))
+  const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32));
+  const prime: bigint = BigInt(2n ** 130n - 5n);
+  let acc: bigint = 0n;
   const block: Uint8Array = new Uint8Array(17);
   const loopEnd: number = Math.ceil(msg.length / 16);
   for (let i: number = 1; i <= loopEnd; ++i) {
-    block.set(msg.subarray(((i - 1) * 16), (i * 16)), 0);
-    block.fill(0x01, 16, 17);
-    const b: bigint = littleEndianBytesToBigInt(block, 0, 17);
-    acc = (r * (acc + b)) % prime;
+    writeBlock(msg, (i - 1) * 16, i * 16, block);
+console.error(`\nblock`, Array.from(block).map(b=>b.toString(16)).join(''), "\n")
+    const b: bigint = littleEndianBytesToBigInt(block);
+console.error("\nswapBigInt(acc + b).toString(16)", swapBigInt(acc + b).toString(16), "\n")
+console.error("\n(r * swapBigInt(acc + b)).toString(16)", (r * swapBigInt(acc + b)).toString(16), "\n")
+    acc = (r * swapBigInt(acc + b)) % prime;
+console.error(`\ni: ${i}; acc: ${acc.toString(16)}\n`)
   }
   acc += s;
-  bigintToSixteenLittleEndianBytes(acc, out);
+  bigIntToLittleEndianBytes(acc, out, 16);
 }

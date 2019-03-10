@@ -23,33 +23,46 @@ export function numberToFourLittleEndianBytes(
   x[o + 3] = u & 0xff;
 }
 
-export function littleEndianBytesToBigInt(
-  x: Uint8Array,
-  o: number,
-  l: number
-): bigint {
+export function littleEndianBytesToBigInt(x: Uint8Array): bigint {
   let b: bigint = 0n;
-  for (let i: number = 0; i < l; ++i) {
-    b += BigInt(x[o + i]) << BigInt(i * 8);
+  for (let i: number = 0; i < x.length; ++i) {
+    b += BigInt(x[i]) << BigInt(i * 8);
   }
   return b;
 }
 
-function bigintToNumber(b: bigint): number {
+export function bigIntToNumber(b: bigint): number {
   return parseInt(String(b));
+}
+
+function bigIntByteLength(b: bigint): number {
+  return Math.ceil(b.toString(16).length / 2);
 }
 
 const BIGINT_BYTE_MASK: bigint = BigInt(0xff);
 const BIGINT_EIGHT: bigint = BigInt(8);
 
-export function bigintToSixteenLittleEndianBytes(
+export function bigIntToLittleEndianBytes(
   b: bigint,
-  out: Uint8Array
+  out: Uint8Array,
+  n: number
 ): void {
-  for (let i: number = 0; i < 16; ++i) {
-    out[i] = bigintToNumber(b & BIGINT_BYTE_MASK);
+  const byteLength: number = n || bigIntByteLength(b);
+  if (out.length !== byteLength) {
+    throw new TypeError(`out must have ${byteLength} bytes`)
+  }
+  for (let i: number = 0; i < byteLength; ++i) {
+    out[i] = bigIntToNumber(b & BIGINT_BYTE_MASK);
     b = b >> BIGINT_EIGHT;
   }
+}
+
+export function swapBigInt(b: bigint): bigint {
+  // const byteLength: number = bigIntByteLength(b);
+  // const bytes: Uint8Array = new Uint8Array(byteLength);
+  // bigIntToLittleEndianBytes(b, bytes, byteLength);
+  // return littleEndianBytesToBigInt(bytes);
+  return BigInt(`0x${b.toString(16).match(/../g).reverse().join('')}`);
 }
 
 export function hex2bin(hex: string): Uint8Array {
