@@ -21,8 +21,7 @@ export function loadTestVector(): {
 
 test(function poly1305Macing(): void {
   const { otk, msg, expected } = loadTestVector();
-  const actual: Uint8Array = new Uint8Array(16);
-  poly1305(otk, msg, actual);
+  const actual: Uint8Array = poly1305(otk, msg);
   assert.equal(actual, expected);
 });
 

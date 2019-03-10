@@ -27,15 +27,13 @@ export function loadTestVector(): {
 
 test(function chaCha20Encryption(): void {
   const { key, nonce, counter, plaintext, ciphertext } = loadTestVector();
-  const actual: Uint8Array = new Uint8Array(plaintext.length);
-  chaCha20Cipher(key, nonce, counter, plaintext, actual);
+  const actual: Uint8Array = chaCha20Cipher(key, nonce, counter, plaintext);
   assert.equal(actual, ciphertext);
 });
 
 test(function chaCha20Decryption(): void {
   const { key, nonce, counter, plaintext, ciphertext } = loadTestVector();
-  const actual: Uint8Array = new Uint8Array(ciphertext.length);
-  chaCha20Cipher(key, nonce, counter, ciphertext, actual);
+  const actual: Uint8Array = chaCha20Cipher(key, nonce, counter, ciphertext);
   assert.equal(actual, plaintext);
 });
 

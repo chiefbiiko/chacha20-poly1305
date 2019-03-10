@@ -16,22 +16,19 @@ export function chaCha20Cipher(
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,
-  plaintext: Uint8Array,
-  out: Uint8Array
-): void {
-  if (out.length !== plaintext.length) {
-    throw new TypeError("out.length must equal plaintext.length");
-  }
-  const loopEnd: number = Math.floor(plaintext.length / 64);
-  const rmd: number = plaintext.length % 64;
+  text: Uint8Array
+): Uint8Array {
+  const out: Uint8Array = new Uint8Array(text.length);
+  const loopEnd: number = Math.floor(text.length / 64);
+  const rmd: number = text.length % 64;
   const keyChunk: Uint8Array = new Uint8Array(64);
-  let plaintextOffset: number = 0;
+  let textOffset: number = 0;
   let outOffset: number = 0;
   let i: number;
-  for (i = 0; i < loopEnd; ++i, plaintextOffset = i * 64, outOffset += 64) {
+  for (i = 0; i < loopEnd; ++i, textOffset = i * 64, outOffset += 64) {
     chaCha20Block(key, nonce, counter + i, keyChunk);
     xor(
-      plaintext.subarray(plaintextOffset, plaintextOffset + 64),
+      text.subarray(textOffset, textOffset + 64),
       keyChunk,
       64,
       out,
@@ -41,11 +38,12 @@ export function chaCha20Cipher(
   if (rmd) {
     chaCha20Block(key, nonce, counter + loopEnd, keyChunk);
     xor(
-      plaintext.subarray(loopEnd * 64, plaintext.length),
+      text.subarray(loopEnd * 64, text.length),
       keyChunk,
       rmd,
       out,
       outOffset
     );
   }
+  return out;
 }

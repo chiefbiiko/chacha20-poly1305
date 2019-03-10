@@ -28,15 +28,12 @@ export const PRIME1305: bigint = 2n ** 130n - 5n;
 
 export function poly1305(
   otk: Uint8Array,
-  msg: Uint8Array,
-  out: Uint8Array
-): void {
+  msg: Uint8Array
+): Uint8Array {
   if (otk.length !== 32) {
     throw new TypeError("otk must have 32 bytes");
   }
-  if (out.length !== 16) {
-    throw new TypeError("out must have 16 bytes");
-  }
+  const out: Uint8Array = new Uint8Array(16);
   const r: bigint = poly1305ClampBigInt(
     littleEndianBytesToBigInt(otk.subarray(0, 16))
   );
@@ -51,4 +48,5 @@ export function poly1305(
     acc = (r * (acc + b)) % PRIME1305;
   }
   bigIntToLittleEndianBytes(acc + s, out, 16);
+  return out;
 }

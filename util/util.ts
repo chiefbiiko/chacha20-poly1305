@@ -45,7 +45,18 @@ export function bigIntToLittleEndianBytes(
 ): void {
   for (let i: number = 0; i < n; ++i) {
     out[i] = bigIntToNumber(b & BIGINT_BYTE_MASK);
-    b = b >> BIGINT_EIGHT;
+    b >>= BIGINT_EIGHT;
+  }
+}
+
+export function numberToLittleEndianBytes(
+  v: number,
+  out: Uint8Array,
+  n: number
+): void {
+  for (let i: number = 0; i < n; ++i) {
+    out[i] = v & 0xff;
+    v >>= 8;
   }
 }
 
