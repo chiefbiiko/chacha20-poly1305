@@ -3,6 +3,7 @@ import {
   littleEndianBytesToBigInt,
   bigIntToLittleEndianBytes,
   swapBigInt
+  // ,inspect
 } from "./../util/util.ts";
 
 function writePoly1305Block(
@@ -38,6 +39,14 @@ export function poly1305(
     littleEndianBytesToBigInt(otk.subarray(0, 16))
   );
   const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32));
+  // {
+  //   const ra = new Uint8Array(16)
+  //   const sa = new Uint8Array(16)
+  //   bigIntToLittleEndianBytes(r, ra, 16)
+  //   bigIntToLittleEndianBytes(s, sa, 16)
+  //   inspect(ra, "ra")
+  //   inspect(sa, "sa")
+  // }
   const block: Uint8Array = new Uint8Array(17);
   let acc: bigint = 0n;
   let b: bigint;

@@ -43,8 +43,8 @@ test(function aeadChaCha20Poly1305Sealing(): void {
     ciphertext: Uint8Array;
     tag: Uint8Array;
   } = aeadChaCha20Poly1305Seal(key, iv, constant, plaintext, aad);
-  assert.equal(actual.ciphertext, ciphertext);
-  assert.equal(actual.tag, tag);
+  assert.equal(actual.ciphertext, ciphertext, "unequal ciphertexts");
+  assert.equal(actual.tag, tag, "unequal tags");
 });
 
 runIfMain(import.meta);

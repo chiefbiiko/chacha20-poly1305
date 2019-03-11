@@ -2,12 +2,7 @@ import { poly1305KeyGen } from "./poly1305_key_gen/poly1305_key_gen.ts";
 import { chaCha20Cipher } from "./chacha20_cipher/chacha20_cipher.ts";
 import { zeroPad16 } from "./zero_pad16/zero_pad16.ts";
 import { poly1305 } from "./poly1305/poly1305.ts";
-import { numberToLittleEndianBytes } from "./util/util.ts";
-
-// /** Last 12 bytes of a 13-char timestamp (ms) */
-// function defaultNonce() {
-//   return new TextEncoder().encode(String(Date.now()).slice(-12));
-// }
+import { numberToLittleEndianBytes, inspect } from "./util/util.ts";
 
 /**
 chacha20_aead_encrypt(aad, key, iv, constant, plaintext):
@@ -39,10 +34,10 @@ export function aeadChaCha20Poly1305Seal(
     throw new TypeError("constant must have 4 bytes");
   }
   const nonce: Uint8Array = new Uint8Array(12);
-  // TODO: write nonce in little endian order
   nonce.set(constant, 0);
   nonce.set(iv, 4);
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
+inspect(otk, "otk")
   const ciphertext: Uint8Array = chaCha20Cipher(key, nonce, 1, plaintext);
   const paddedCiphertext: Uint8Array = zeroPad16(ciphertext);
   const paddedAad: Uint8Array = zeroPad16(aad);
@@ -63,5 +58,8 @@ export function aeadChaCha20Poly1305Seal(
     8,
     paddedAad.length + paddedCiphertext.length + 8
   );
-  return { ciphertext, tag: poly1305(otk, pac) };
+inspect(pac, "pac")
+  const tag: Uint8Array = poly1305(otk, pac);
+inspect(tag, "tag")
+  return { ciphertext, tag };
 }

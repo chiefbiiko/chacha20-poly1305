@@ -63,13 +63,11 @@ export function numberToLittleEndianBytes(
 }
 
 export function swapBigInt(b: bigint): bigint {
-  return BigInt(
-    `0x${b
-      .toString(16)
-      .match(/../g)
-      .reverse()
-      .join("")}`
-  );
+  let hex: string = b.toString(16);
+  if (hex.length % 2) {
+    hex = `0${hex}`;
+  }
+  return BigInt(`0x${hex.match(/../g).reverse().join("")}`);
 }
 
 export function hex2bin(hex: string): Uint8Array {
@@ -87,4 +85,15 @@ export function hex2bin(hex: string): Uint8Array {
     buf[i] = parsed;
   }
   return buf;
+}
+
+export function inspect(x: Uint8Array, msg: string = ""): void {
+  const hex: string = x.reduce((acc: string, cur: number) => {
+    let byte: string = cur.toString(16);
+    if (byte.length === 1) {
+      byte = `0${byte}`;
+    }
+    return `${acc}${byte}`;
+  }, "");
+  console.error("\n", msg, hex, "\n");
 }

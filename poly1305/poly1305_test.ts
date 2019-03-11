@@ -4,25 +4,37 @@ import { hex2bin } from "./../util/util.ts";
 
 const { readFileSync } = Deno;
 
-export function loadTestVector(): {
+interface TestVector {
   otk: Uint8Array;
   msg: Uint8Array;
-  expected: Uint8Array;
-} {
-  const testVector = JSON.parse(
-    new TextDecoder().decode(readFileSync("./poly1305_test_vector.json"))
-  );
-  return {
-    otk: hex2bin(testVector.otk),
-    msg: hex2bin(testVector.msg),
-    expected: hex2bin(testVector.expected)
-  };
+  tag: Uint8Array;
 }
 
+export function loadTestVectors(): TestVector[] {
+  const testVectors = JSON.parse(
+    new TextDecoder().decode(readFileSync("./poly1305_test_vectors.json"))
+  );
+  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
+    otk: hex2bin(testVector.otk),
+    msg: hex2bin(testVector.msg),
+    tag: hex2bin(testVector.tag)
+  }));
+}
+
+const testVectors: TestVector[] = loadTestVectors();
+const edgeCases: TestVector[] = testVectors.splice(-2);
+
+
 test(function poly1305Macing(): void {
-  const { otk, msg, expected } = loadTestVector();
-  const actual: Uint8Array = poly1305(otk, msg);
-  assert.equal(actual, expected);
+  for (const { otk, msg, tag } of testVectors) {
+    assert.equal(poly1305(otk, msg), tag);  
+  }
 });
+
+// test(function poly1305MacingEdgeCases(): void {
+//   for (const { otk, msg, tag } of edgeCases) {
+//     assert.equal(poly1305(otk, msg), tag);  
+//   }
+// });
 
 runIfMain(import.meta);
