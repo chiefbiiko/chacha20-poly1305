@@ -4,27 +4,29 @@ import { hex2bin } from "./../util/util.ts";
 
 const { readFileSync } = Deno;
 
-export function loadTestVector(): {
+interface TestVector {
   key: Uint8Array;
   nonce: Uint8Array;
-  expected: Uint8Array;
-} {
-  const testVector = JSON.parse(
+  otk: Uint8Array;
+}
+
+export function loadTestVectors(): TestVector[] {
+  const testVectors = JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./poly1305_key_gen_test_vector.json")
+      readFileSync("./poly1305_key_gen_test_vectors.json")
     )
   );
-  return {
+  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
     key: hex2bin(testVector.key),
     nonce: hex2bin(testVector.nonce),
-    expected: hex2bin(testVector.expected)
-  };
+    otk: hex2bin(testVector.otk)
+  }));
 }
 
 test(function poly1305KeyGeneration(): void {
-  const { key, nonce, expected } = loadTestVector();
-  const otk: Uint8Array = poly1305KeyGen(key, nonce);
-  assert.equal(otk, expected);
+  for (const { key, nonce, otk } of loadTestVectors()) {
+    assert.equal(poly1305KeyGen(key, nonce), otk);
+  }
 });
 
 runIfMain(import.meta);
