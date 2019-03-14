@@ -53,11 +53,11 @@ export function aeadChaCha20Poly1305Seal(
   return { ciphertext, tag };
 }
 
-export function aeadChaCha20Poly1305Open(
-  key: Uint8Array,
-  nonce: Uint8Array,
-  plaintext: Uint8Array,
-  aad: Uint8Array
-): Uint8Array {
-  
-}
+// export function aeadChaCha20Poly1305Open(
+//   key: Uint8Array,
+//   nonce: Uint8Array,
+//   plaintext: Uint8Array,
+//   aad: Uint8Array
+// ): Uint8Array {
+// 
+// }
