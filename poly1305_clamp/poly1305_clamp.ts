@@ -1,4 +1,4 @@
-export function poly1305Clamp(r: Uint8Array): void {
+export function poly1305ClampLittleEndianBytes(r: Uint8Array): void {
   if (r.length !== 16) {
     throw new TypeError("r must have 16 bytes");
   }
@@ -11,6 +11,6 @@ export function poly1305Clamp(r: Uint8Array): void {
   r[12] &= 252;
 }
 
-export function poly1305ClampBigInt(r: bigint): bigint {
+export function poly1305ClampLittleEndianBytesLittleEndianBigInt(r: bigint): bigint {
   return r & 0x0ffffffc0ffffffc0ffffffc0fffffffn;
 }
