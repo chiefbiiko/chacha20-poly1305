@@ -4,7 +4,7 @@ import { hex2bin } from "./util/util.ts";
 
 const { readFileSync } = Deno;
 
-export function loadTestVector(): {
+function loadTestVector(): {
   key: Uint8Array;
   iv: Uint8Array;
   constant: Uint8Array;

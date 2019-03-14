@@ -10,7 +10,7 @@ interface TestVector {
   tag: Uint8Array;
 }
 
-export function loadTestVectors(): TestVector[] {
+function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
     new TextDecoder().decode(readFileSync("./poly1305_test_vectors.json"))
   );
@@ -27,13 +27,13 @@ const edgeCases: TestVector[] = testVectors.splice(-2);
 
 test(function poly1305Macing(): void {
   for (const { otk, msg, tag } of testVectors) {
-    assert.equal(poly1305(otk, msg), tag);  
+    assert.equal(poly1305(otk, msg), tag);
   }
 });
 
 // test(function poly1305MacingEdgeCases(): void {
 //   for (const { otk, msg, tag } of edgeCases) {
-//     assert.equal(poly1305(otk, msg), tag);  
+//     assert.equal(poly1305(otk, msg), tag);
 //   }
 // });
 

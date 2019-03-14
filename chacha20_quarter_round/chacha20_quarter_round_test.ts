@@ -3,7 +3,7 @@ import { chaCha20QuarterRound } from "./chacha20_quarter_round.ts";
 
 const { readFileSync } = Deno;
 
-export function loadTestVector(): {
+function loadTestVector(): {
   initialState: Uint32Array;
   quarterRoundParameters: number[];
   expectedState: Uint32Array;

@@ -10,7 +10,7 @@ interface TestVector {
   otk: Uint8Array;
 }
 
-export function loadTestVectors(): TestVector[] {
+function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
     new TextDecoder().decode(
       readFileSync("./poly1305_key_gen_test_vectors.json")

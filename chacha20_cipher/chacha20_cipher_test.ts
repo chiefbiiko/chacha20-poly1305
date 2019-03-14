@@ -4,37 +4,41 @@ import { hex2bin } from "./../util/util.ts";
 
 const { readFileSync } = Deno;
 
-export function loadTestVector(): {
+interface TestVector {
   key: Uint8Array;
   nonce: Uint8Array;
   counter: number;
   plaintext: Uint8Array;
   ciphertext: Uint8Array;
-} {
-  const testVector = JSON.parse(
+}
+
+function loadTestVectors(): TestVector[] {
+  const testVectors = JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./chacha20_cipher_test_vector.json")
+      readFileSync("./chacha20_cipher_test_vectors.json")
     )
   );
-  return {
+  return testVectors.map((testVector: { [key: string]: any }): TestVector => ({
     key: hex2bin(testVector.key),
     nonce: hex2bin(testVector.nonce),
     counter: testVector.counter,
     plaintext: hex2bin(testVector.plaintext),
     ciphertext: hex2bin(testVector.ciphertext)
-  };
+  }));
 }
 
+const testVectors: TestVector[] = loadTestVectors();
+
 test(function chaCha20Encryption(): void {
-  const { key, nonce, counter, plaintext, ciphertext } = loadTestVector();
-  const actual: Uint8Array = chaCha20Cipher(key, nonce, counter, plaintext);
-  assert.equal(actual, ciphertext);
+  for (const { key, nonce, counter, plaintext, ciphertext } of testVectors) {
+    assert.equal(chaCha20Cipher(key, nonce, counter, plaintext), ciphertext);
+  }
 });
 
 test(function chaCha20Decryption(): void {
-  const { key, nonce, counter, plaintext, ciphertext } = loadTestVector();
-  const actual: Uint8Array = chaCha20Cipher(key, nonce, counter, ciphertext);
-  assert.equal(actual, plaintext);
+  for (const { key, nonce, counter, plaintext, ciphertext } of testVectors) {
+    assert.equal(chaCha20Cipher(key, nonce, counter, ciphertext), plaintext);
+  }
 });
 
 runIfMain(import.meta, { parallel: true });

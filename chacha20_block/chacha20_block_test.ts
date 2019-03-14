@@ -11,7 +11,7 @@ interface TestVector {
   expected: Uint8Array;
 }
 
-export function loadTestVectors(): TestVector[] {
+function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
     new TextDecoder().decode(readFileSync("./chacha20_block_test_vectors.json"))
   );
