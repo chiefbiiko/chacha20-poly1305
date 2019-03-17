@@ -1,6 +1,6 @@
 import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { poly1305ClampLittleEndianBytes, poly1305ClampLittleEndianBytesLittleEndianBigInt } from "./poly1305_clamp.ts";
-import { hex2bin, littleEndianBytesToLittleEndianBigInt } from "./../util/util.ts";
+import { poly1305ClampLittleEndianBytes, poly1305ClampLittleEndianBigInt } from "./poly1305_clamp.ts";
+import { hex2bin, littleEndianBytesToBigInt } from "./../util/util.ts";
 
 test(function poly1305ClampLittleEndianBytesing(): void {
   const r: Uint8Array = hex2bin("deadbeefdeadbeefdeadbeefdeadbeef");
@@ -17,9 +17,9 @@ test(function poly1305ClampLittleEndianBytesing(): void {
 test(function poly1305ClampLittleEndianBytesingBigInt(): void {
   let r: Uint8Array = hex2bin("deadbeefdeadbeefdeadbeefdeadbeef");
   poly1305ClampLittleEndianBytes(r);
-  const expected: bigint = littleEndianBytesToLittleEndianBigInt(r, 0, 16);
-  const rb: bigint = littleEndianBytesToLittleEndianBigInt(hex2bin("deadbeefdeadbeefdeadbeefdeadbeef"), 0, 16);
-  const actual: bigint = poly1305ClampLittleEndianBytesLittleEndianBigInt(rb);
+  const expected: bigint = littleEndianBytesToBigInt(r, 0, 16);
+  const rb: bigint = littleEndianBytesToBigInt(hex2bin("deadbeefdeadbeefdeadbeefdeadbeef"), 0, 16);
+  const actual: bigint = poly1305ClampLittleEndianBigInt(rb);
   assert.equal(actual, expected);
 });
 

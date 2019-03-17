@@ -23,7 +23,7 @@ export function numberToFourLittleEndianBytes(
   x[o + 3] = u & 0xff;
 }
 
-export function littleEndianBytesToLittleEndianBigInt(x: Uint8Array): bigint {
+export function littleEndianBytesToBigInt(x: Uint8Array): bigint {
   let b: bigint = 0n;
   for (let i: number = 0; i < x.length; ++i) {
     b += BigInt(x[i]) << BigInt(i * 8);
