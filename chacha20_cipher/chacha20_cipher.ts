@@ -12,12 +12,24 @@ function xor(
   }
 }
 
+export const KEY_BYTES: number = 32;
+export const NONCE_BYTES: number = 12;
+
 export function chaCha20Cipher(
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,
   text: Uint8Array
 ): Uint8Array {
+  if (key.length !== KEY_BYTES) {
+    throw new TypeError(`key must have ${KEY_BYTES} bytes`);
+  }
+  if (nonce.length !== NONCE_BYTES) {
+    throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
+  }
+  if (counter < 0 || counter % 1) {
+    throw new TypeError("counter must be an unsigned integer");
+  }
   const out: Uint8Array = new Uint8Array(text.length);
   const loopEnd: number = Math.floor(text.length / 64);
   const rmd: number = text.length % 64;
