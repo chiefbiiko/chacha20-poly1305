@@ -23,7 +23,7 @@ function loadTestVectors(): TestVector[] {
   }));
 }
 
-test(function poly1305KeyGeneration(): void {
+test(function poly1305KeyGenBasic(): void {
   for (const { key, nonce, otk } of loadTestVectors()) {
     assert.equal(poly1305KeyGen(key, nonce), otk);
   }

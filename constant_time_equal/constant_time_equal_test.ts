@@ -30,7 +30,7 @@ test(function constantTimeEqualThrows(): void {
   assert.throws(constantTimeEqual.bind(null, a, b), TypeError);
 });
 
-test(function constantTimeEqualTimings(): void {
+test(function constantTimeEqualTiming(): void {
   const n: number = 1000;
   const timings: number[] = Array(n);
   const a: Uint8Array = new Uint8Array(16);
@@ -47,7 +47,6 @@ test(function constantTimeEqualTimings(): void {
     timings.push(Date.now() - start);
   }
   const stdDev: number = standardDeviation(timings);
-  console.log('stdDev', stdDev)
   assert(stdDev < .1); // lt 100 microseconds
 });
 

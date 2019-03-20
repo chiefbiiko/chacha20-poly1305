@@ -22,7 +22,7 @@ function loadTestVectors(): TestVector[] {
   }));
 }
 
-test(function chaCha20QuarterRounding(): void {
+test(function chaCha20QuarterRoundBasic(): void {
   for (const {
       initialState,
       quarterRoundParameters: [a, b, c, d],

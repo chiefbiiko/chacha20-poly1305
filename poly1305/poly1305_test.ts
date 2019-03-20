@@ -25,13 +25,13 @@ const testVectors: TestVector[] = loadTestVectors();
 const edgeCases: TestVector[] = testVectors.splice(-2);
 
 
-test(function poly1305Macing(): void {
+test(function poly1305Basic(): void {
   for (const { otk, msg, tag } of testVectors) {
     assert.equal(poly1305(otk, msg), tag);
   }
 });
 
-// test(function poly1305MacingEdgeCases(): void {
+// test(function poly1305EdgeCases(): void {
 //   for (const { otk, msg, tag } of edgeCases) {
 //     assert.equal(poly1305(otk, msg), tag);
 //   }

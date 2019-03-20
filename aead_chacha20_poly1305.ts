@@ -10,6 +10,7 @@ export const NONCE_BYTES: number = 12;
 export const PLAINTEXT_BYTES_MAX: bigint = 274877906880n;
 export const CIPHERTEXT_BYTES_MAX: bigint = 274877906896n;
 export const AAD_BYTES_MAX: bigint = 18446744073709551615n;
+export const TAG_BYTES: number = 16;
 
 function writePac(ciphertext: Uint8Array, aad: Uint8Array): Uint8Array {
   const paddedCiphertext: Uint8Array = zeroPad16(ciphertext);
@@ -77,6 +78,9 @@ export function aeadChaCha20Poly1305Open(
   }
   if (aad.length > AAD_BYTES_MAX) {
     throw new TypeError(`aad must not have more than ${AAD_BYTES_MAX} bytes`);
+  }
+  if (receivedTag.length !== TAG_BYTES) {
+    throw new TypeError(`receivedTag must have ${TAG_BYTES} bytes`);
   }
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const pac: Uint8Array = writePac(ciphertext, aad);

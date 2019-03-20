@@ -23,7 +23,7 @@ function loadTestVectors(): TestVector[] {
   }));
 }
 
-test(function chaCha20Blocking(): void {
+test(function chaCha20BlockBasic(): void {
   const actual: Uint8Array = new Uint8Array(64);
   for (const { key, nonce, counter, expected } of loadTestVectors()) {
     chaCha20Block(key, nonce, counter, actual);

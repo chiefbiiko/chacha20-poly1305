@@ -1,5 +1,8 @@
 import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { aeadChaCha20Poly1305Seal } from "./aead_chacha20_poly1305.ts";
+import {
+  aeadChaCha20Poly1305Seal,
+  aeadChaCha20Poly1305Open
+} from "./aead_chacha20_poly1305.ts";
 import { hex2bin } from "./util/util.ts";
 
 const { readFileSync } = Deno;
@@ -13,35 +16,25 @@ interface TestVector {
   tag: Uint8Array;
 }
 
-function loadTestVectors(): { seal: TestVector[], open: TestVector[] } {
+function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
     new TextDecoder().decode(
       readFileSync("./aead_chacha20_poly1305_test_vectors.json")
     )
   );
-  return {
-    seal: testVectors.seal.map((testVector: { [key: string]: string }): TestVector => ({
-        key: hex2bin(testVector.key),
-        nonce: hex2bin(testVector.nonce),
-        plaintext: hex2bin(testVector.plaintext),
-        aad: hex2bin(testVector.aad),
-        ciphertext: hex2bin(testVector.ciphertext),
-        tag: hex2bin(testVector.tag)
-      })),
-    open: testVectors.open.map((testVector: { [key: string]: string }): TestVector => ({
-        key: hex2bin(testVector.key),
-        nonce: hex2bin(testVector.nonce),
-        plaintext: hex2bin(testVector.plaintext),
-        aad: hex2bin(testVector.aad),
-        ciphertext: hex2bin(testVector.ciphertext),
-        tag: hex2bin(testVector.tag)
-      }))
-  };
+  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
+    key: hex2bin(testVector.key),
+    nonce: hex2bin(testVector.nonce),
+    plaintext: hex2bin(testVector.plaintext),
+    aad: hex2bin(testVector.aad),
+    ciphertext: hex2bin(testVector.ciphertext),
+    tag: hex2bin(testVector.tag)
+  }));
 }
 
-const testVectors: { seal: TestVector[], open: TestVector[] } = loadTestVectors();
+const testVectors: TestVector[] = loadTestVectors();
 
-test(function aeadChaCha20Poly1305Sealing(): void {
+test(function aeadChaCha20Poly1305SealBasic(): void {
   for (const {
       key,
       nonce,
@@ -49,13 +42,46 @@ test(function aeadChaCha20Poly1305Sealing(): void {
       aad,
       ciphertext,
       tag
-    } of testVectors.seal) {
+    } of testVectors) {
     const actual: {
       ciphertext: Uint8Array;
       tag: Uint8Array;
     } = aeadChaCha20Poly1305Seal(key, nonce, plaintext, aad);
-    assert.equal(actual.ciphertext, ciphertext, "unequal ciphertexts");
-    assert.equal(actual.tag, tag, "unequal tags");
+    assert.equal(actual.ciphertext, ciphertext);
+    assert.equal(actual.tag, tag);
+  }
+});
+
+test(function aeadChaCha20Poly1305OpenBasic(): void {
+  for (const {
+      key,
+      nonce,
+      plaintext,
+      aad,
+      ciphertext,
+      tag
+    } of testVectors) {
+    assert.equal(
+      aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, tag),
+      plaintext
+    );
+  }
+});
+
+test(function aeadChaCha20Poly1305OpenThrows(): void {
+  const receivedTag: Uint8Array = new Uint8Array(16);
+  for (const {
+      key,
+      nonce,
+      plaintext,
+      aad,
+      ciphertext,
+      tag
+    } of testVectors) {
+    assert.throws(
+      aeadChaCha20Poly1305Open.bind(null, key, nonce, ciphertext, aad, receivedTag),
+      Error
+    );
   }
 });
 
