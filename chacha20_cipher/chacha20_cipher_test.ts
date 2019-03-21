@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { chaCha20Cipher } from "./chacha20_cipher.ts";
 import { hex2bin } from "./../util/util.ts";
 
@@ -33,13 +34,13 @@ const testVectors: TestVector[] = loadTestVectors();
 
 test(function chaCha20Encryption(): void {
   for (const { key, nonce, counter, plaintext, ciphertext } of testVectors) {
-    assert.equal(chaCha20Cipher(key, nonce, counter, plaintext), ciphertext);
+    assertEquals(chaCha20Cipher(key, nonce, counter, plaintext), ciphertext);
   }
 });
 
 test(function chaCha20Decryption(): void {
   for (const { key, nonce, counter, plaintext, ciphertext } of testVectors) {
-    assert.equal(chaCha20Cipher(key, nonce, counter, ciphertext), plaintext);
+    assertEquals(chaCha20Cipher(key, nonce, counter, ciphertext), plaintext);
   }
 });
 

@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { chaCha20Block } from "./chacha20_block.ts";
 import { hex2bin } from "./../util/util.ts";
 
@@ -29,7 +30,7 @@ test(function chaCha20BlockBasic(): void {
   const actual: Uint8Array = new Uint8Array(64);
   for (const { key, nonce, counter, expected } of loadTestVectors()) {
     chaCha20Block(key, nonce, counter, actual);
-    assert.equal(actual, expected);
+    assertEquals(actual, expected);
   }
 });
 

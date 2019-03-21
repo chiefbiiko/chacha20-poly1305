@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { poly1305KeyGen } from "./poly1305_key_gen.ts";
 import { hex2bin } from "./../util/util.ts";
 
@@ -27,7 +28,7 @@ function loadTestVectors(): TestVector[] {
 
 test(function poly1305KeyGenBasic(): void {
   for (const { key, nonce, otk } of loadTestVectors()) {
-    assert.equal(poly1305KeyGen(key, nonce), otk);
+    assertEquals(poly1305KeyGen(key, nonce), otk);
   }
 });
 

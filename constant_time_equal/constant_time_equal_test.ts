@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assert, assertThrows } from "https://deno.land/std/testing/asserts.ts";
 import { constantTimeEqual } from "./constant_time_equal.ts";
 
 function average(arr: number[]): number {
@@ -27,7 +28,7 @@ test(function constantTimeEqualTrueNegative(): void {
 test(function constantTimeEqualThrows(): void {
   const a: Uint8Array = new Uint8Array([1,2,3]);
   const b: Uint8Array = new Uint8Array([3,2]);
-  assert.throws(constantTimeEqual.bind(null, a, b), TypeError);
+  assertThrows(constantTimeEqual.bind(null, a, b), TypeError);
 });
 
 test(function constantTimeEqualTiming(): void {
@@ -50,4 +51,4 @@ test(function constantTimeEqualTiming(): void {
   assert(stdDev < .1); // lt 100 microseconds
 });
 
-runIfMain(import.meta);
+runIfMain(import.meta, { parallel: true });

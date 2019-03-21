@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { poly1305ClampLittleEndianBytes, poly1305ClampLittleEndianBigInt } from "./poly1305_clamp.ts";
 import { hex2bin, littleEndianBytesToBigInt } from "./../util/util.ts";
 
@@ -20,7 +21,7 @@ test(function poly1305ClampLittleEndianBigIntBasic(): void {
   const expected: bigint = littleEndianBytesToBigInt(r);
   const rb: bigint = littleEndianBytesToBigInt(hex2bin("deadbeefdeadbeefdeadbeefdeadbeef"));
   const actual: bigint = poly1305ClampLittleEndianBigInt(rb);
-  assert.equal(actual, expected);
+  assertEquals(actual, expected);
 });
 
 runIfMain(import.meta);

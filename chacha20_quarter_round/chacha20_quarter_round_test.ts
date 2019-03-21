@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { chaCha20QuarterRound } from "./chacha20_quarter_round.ts";
 
 const { readFileSync } = Deno;
@@ -32,7 +33,7 @@ test(function chaCha20QuarterRoundBasic(): void {
     } of loadTestVectors()) {
     const state = Uint32Array.from(initialState);
     chaCha20QuarterRound(state, a, b, c, d);
-    assert.equal(state, expectedState);
+    assertEquals(state, expectedState);
   }
 });
 

@@ -1,4 +1,5 @@
-import { test, assert, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std/testing/asserts.ts";
 import {
   aeadChaCha20Poly1305Seal,
   aeadChaCha20Poly1305Open
@@ -47,8 +48,8 @@ test(function aeadChaCha20Poly1305SealBasic(): void {
       ciphertext: Uint8Array;
       tag: Uint8Array;
     } = aeadChaCha20Poly1305Seal(key, nonce, plaintext, aad);
-    assert.equal(actual.ciphertext, ciphertext);
-    assert.equal(actual.tag, tag);
+    assertEquals(actual.ciphertext, ciphertext);
+    assertEquals(actual.tag, tag);
   }
 });
 
@@ -61,7 +62,7 @@ test(function aeadChaCha20Poly1305OpenBasic(): void {
       ciphertext,
       tag
     } of testVectors) {
-    assert.equal(
+    assertEquals(
       aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, tag),
       plaintext
     );
@@ -78,11 +79,11 @@ test(function aeadChaCha20Poly1305OpenThrows(): void {
       ciphertext,
       tag
     } of testVectors) {
-    assert.throws(
+    assertThrows(
       aeadChaCha20Poly1305Open.bind(null, key, nonce, ciphertext, aad, receivedTag),
       Error
     );
   }
 });
 
-runIfMain(import.meta);
+runIfMain(import.meta, { parallel: true });
