@@ -3,9 +3,10 @@ import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { poly1305KeyGen } from "./poly1305_key_gen.ts";
 import { hex2bin } from "./../util/util.ts";
 
-const { readFileSync } = Deno;
+const { readFileSync, platform: { os } } = Deno;
 
-const DIRNAME = import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
+const DIRNAME = (os !== "win" ? "/" : "") +
+  import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
 
 interface TestVector {
   key: Uint8Array;

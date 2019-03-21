@@ -2,9 +2,10 @@ import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { chaCha20QuarterRound } from "./chacha20_quarter_round.ts";
 
-const { readFileSync } = Deno;
+const { readFileSync, platform: { os } } = Deno;
 
-const DIRNAME = import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
+const DIRNAME = (os !== "win" ? "/" : "") +
+  import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
 
 interface TestVector {
   initialState: Uint32Array;
