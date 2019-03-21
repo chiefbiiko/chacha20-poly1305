@@ -4,6 +4,8 @@ import { hex2bin } from "./../util/util.ts";
 
 const { readFileSync } = Deno;
 
+const DIRNAME = import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
+
 interface TestVector {
   key: Uint8Array;
   nonce: Uint8Array;
@@ -15,7 +17,7 @@ interface TestVector {
 function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./chacha20_cipher_test_vectors.json")
+      readFileSync(`${DIRNAME}/chacha20_cipher_test_vectors.json`)
     )
   );
   return testVectors.map((testVector: { [key: string]: any }): TestVector => ({

@@ -4,6 +4,8 @@ import { hex2bin } from "./../util/util.ts";
 
 const { readFileSync } = Deno;
 
+const DIRNAME = import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
+
 interface TestVector {
   otk: Uint8Array;
   msg: Uint8Array;
@@ -12,7 +14,7 @@ interface TestVector {
 
 function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
-    new TextDecoder().decode(readFileSync("./poly1305_test_vectors.json"))
+    new TextDecoder().decode(readFileSync(`${DIRNAME}/poly1305_test_vectors.json`))
   );
   return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
     otk: hex2bin(testVector.otk),

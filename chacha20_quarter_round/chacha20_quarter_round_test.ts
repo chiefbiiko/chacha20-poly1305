@@ -3,6 +3,8 @@ import { chaCha20QuarterRound } from "./chacha20_quarter_round.ts";
 
 const { readFileSync } = Deno;
 
+const DIRNAME = import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
+
 interface TestVector {
   initialState: Uint32Array;
   quarterRoundParameters: number[];
@@ -12,7 +14,7 @@ interface TestVector {
 function loadTestVectors(): TestVector[] {
   const testVectors = JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./chacha20_quarter_round_test_vectors.json")
+      readFileSync(`${DIRNAME}/chacha20_quarter_round_test_vectors.json`)
     )
   );
   return testVectors.map((testVector: { [key: string]: any }): TestVector => ({
