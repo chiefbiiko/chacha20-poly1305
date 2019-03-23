@@ -1,16 +1,8 @@
-import { chaCha20Block } from "./../chacha20_block/chacha20_block.ts";
-
-function xor(
-  a: Uint8Array,
-  b: Uint8Array,
-  length: number,
-  c: Uint8Array,
-  o: number
-): void {
-  for (let i: number = 0; i < length; ++i) {
-    c[o + i] = a[i] ^ b[i];
-  }
-}
+import {
+  chaCha20Block,
+  chaCha20InitState
+} from "./../chacha20_block/chacha20_block.ts";
+import { xor } from "./../util/util.ts"
 
 export const KEY_BYTES: number = 32;
 export const NONCE_BYTES: number = 12;
@@ -34,11 +26,12 @@ export function chaCha20Cipher(
   const loopEnd: number = Math.floor(text.length / 64);
   const rmd: number = text.length % 64;
   const keyChunk: Uint8Array = new Uint8Array(64);
+  const initialState: Uint32Array = chaCha20InitState(key, nonce, counter);
   let textOffset: number = 0;
   let outOffset: number = 0;
   let i: number;
   for (i = 0; i < loopEnd; ++i, textOffset = i * 64, outOffset += 64) {
-    chaCha20Block(key, nonce, counter + i, keyChunk);
+    chaCha20Block(null, null, counter + i, keyChunk, initialState);
     xor(
       text.subarray(textOffset, textOffset + 64),
       keyChunk,
@@ -48,7 +41,7 @@ export function chaCha20Cipher(
     );
   }
   if (rmd) {
-    chaCha20Block(key, nonce, counter + loopEnd, keyChunk);
+    chaCha20Block(null, null, counter + loopEnd, keyChunk, initialState);
     xor(
       text.subarray(loopEnd * 64, text.length),
       keyChunk,

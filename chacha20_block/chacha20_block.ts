@@ -1,18 +1,16 @@
 import {
   chaCha20QuarterRound
 } from "./../chacha20_quarter_round/chacha20_quarter_round.ts";
-
 import {
   numberToFourLittleEndianBytes,
   fourLittleEndianBytesToNumber
 } from "./../util/util.ts";
 
-export function chaCha20Block(
+export function chaCha20InitState(
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,
-  out: Uint8Array
-): void {
+): Uint32Array {
   const state = new Uint32Array(16);
   state[0] = 0x61707865;
   state[1] = 0x3320646e;
@@ -30,7 +28,22 @@ export function chaCha20Block(
   state[13] = fourLittleEndianBytesToNumber(nonce, 0);
   state[14] = fourLittleEndianBytesToNumber(nonce, 4);
   state[15] = fourLittleEndianBytesToNumber(nonce, 8);
-  const initialState: Uint32Array = Uint32Array.from(state);
+  return state;
+}
+
+export function chaCha20Block(
+  key: Uint8Array,
+  nonce: Uint8Array,
+  counter: number,
+  out: Uint8Array,
+  initialState?: Uint32Array
+): void {
+  if (!initialState) {
+    initialState = chaCha20InitState(key, nonce, counter);
+  } else {
+    initialState[12] = counter & 0xffffffff;
+  }
+  const state: Uint32Array = Uint32Array.from(initialState);
   let i: number;
   for (i = 0; i < 10; ++i) {
     chaCha20QuarterRound(state, 0, 4, 8, 12);

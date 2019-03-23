@@ -1,5 +1,5 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { assertEquals, assertThrows } from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import {
   aeadChaCha20Poly1305Seal,
   aeadChaCha20Poly1305Open
@@ -69,19 +69,12 @@ test(function aeadChaCha20Poly1305OpenBasic(): void {
   }
 });
 
-test(function aeadChaCha20Poly1305OpenThrows(): void {
+test(function aeadChaCha20Poly1305OpenNullIfNotAuthenticated(): void {
   const receivedTag: Uint8Array = new Uint8Array(16);
-  for (const {
-      key,
-      nonce,
-      plaintext,
-      aad,
-      ciphertext,
-      tag
-    } of testVectors) {
-    assertThrows(
-      aeadChaCha20Poly1305Open.bind(null, key, nonce, ciphertext, aad, receivedTag),
-      Error
+  for (const { key, nonce, aad, ciphertext } of testVectors) {
+    assertEquals(
+      aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, receivedTag),
+      null
     );
   }
 });

@@ -1,3 +1,15 @@
+export function xor(
+  a: Uint8Array,
+  b: Uint8Array,
+  l: number,
+  c: Uint8Array,
+  o: number
+): void {
+  for (let i: number = 0; i < l; ++i) {
+    c[o + i] = a[i] ^ b[i];
+  }
+}
+
 export function rotateLeft(v: number, c: number): number {
   return (v << c) | (v >>> (32 - c));
 }
@@ -72,28 +84,24 @@ export function swapBigInt(b: bigint): bigint {
 
 export function hex2bin(hex: string): Uint8Array {
   const len: number = hex.length;
-  if (len % 2) {
+  if (len % 2 || !/^[0-9a-fA-F]+$/.test(hex)) {
     throw new TypeError("Invalid hex string");
   }
   const buf: Uint8Array = new Uint8Array(Math.floor(len / 2));
   const end: number = len / 2;
   for (let i: number = 0; i < end; ++i) {
-    const parsed = parseInt(hex.substr(i * 2, 2), 16);
-    if (Number.isNaN(parsed)) {
-      throw new TypeError("Invalid byte");
-    }
-    buf[i] = parsed;
+    buf[i] = parseInt(hex.substr(i * 2, 2), 16);
   }
   return buf;
 }
 
-export function inspect(x: Uint8Array, msg: string = ""): void {
-  const hex: string = x.reduce((acc: string, cur: number) => {
-    let byte: string = cur.toString(16);
-    if (byte.length === 1) {
-      byte = `0${byte}`;
-    }
-    return `${acc}${byte}`;
-  }, "");
-  console.error("\n", msg, hex, "\n");
-}
+// export function inspect(x: Uint8Array, msg: string = ""): void {
+//   const hex: string = x.reduce((acc: string, cur: number) => {
+//     let byte: string = cur.toString(16);
+//     if (byte.length === 1) {
+//       byte = `0${byte}`;
+//     }
+//     return `${acc}${byte}`;
+//   }, "");
+//   console.error("\n", msg, hex, "\n");
+// }
