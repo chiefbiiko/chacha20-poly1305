@@ -36,6 +36,7 @@ export function chaCha20Block(
   nonce: Uint8Array,
   counter: number,
   out: Uint8Array,
+  state?: Uint32Array,
   initialState?: Uint32Array
 ): void {
   if (!initialState) {
@@ -43,7 +44,10 @@ export function chaCha20Block(
   } else {
     initialState[12] = counter & 0xffffffff;
   }
-  const state: Uint32Array = Uint32Array.from(initialState);
+  if (!state) {
+    state = new Uint32Array(16);
+  }
+  state.set(initialState);  
   let i: number;
   for (i = 0; i < 10; ++i) {
     chaCha20QuarterRound(state, 0, 4, 8, 12);
