@@ -25,22 +25,24 @@ function writePoly1305Block(
 }
 
 
-// function msgBlockToBigInt(
-//   msg: Uint8Array,
-//   blockStart: number,
-//   blockEnd: number
-// ): bigint {
-//   const exc: number = blockEnd - msg.length;
-//   if (exc > 0) {
-//     blockEnd -= exc;
-//   }
-//   let b: bigint = 0n;
-//   for (let i: number = blockStart; i < blockEnd; ++i) {
-//     b += BigInt(msg[i]) << BigInt(i * 8); 
-//   }
-//   b += 0x01n << BigInt(blockEnd * 8);
-//   return b;
-// }
+function msgBlockToBigInt(
+  msg: Uint8Array,
+  blockStart: number,
+  blockEnd: number
+): bigint {
+  const exc: number = blockEnd - msg.length;
+  if (exc > 0) {
+    blockEnd -= exc;
+  }
+  // let b: bigint = 0n;
+  let b: bigint = 1n;
+  for (let i: number = blockStart; i < blockEnd; ++i) {
+    // b += BigInt(msg[i]) << BigInt(i * 8); 
+    b = BigInt(msg[i]) + b * 256n;
+  }
+  // b += 0x01n << BigInt(blockEnd * 8);
+  return b;
+}
 
 export const PRIME1305: bigint = 2n ** 130n - 5n;
 export const KEY_BYTES: number = 32;
@@ -66,7 +68,7 @@ export function poly1305(
     writePoly1305Block(msg, i * 16, block);
 // console.error('\n', 'block', block, '\n');
     b = swapBigInt(littleEndianBytesToBigInt(block));
-//   b = msgBlockToBigInt(msg, (i - 1) * 16, i * 16);
+  // b = msgBlockToBigInt(msg, (i - 1) * 16, i * 16);
 // console.error('\n', 'b', b, '\n');
     acc = (r * (acc + b)) % PRIME1305;
   }
