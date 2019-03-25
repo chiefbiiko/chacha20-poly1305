@@ -39,13 +39,13 @@ export function chaCha20Block(
   state?: Uint32Array,
   initialState?: Uint32Array
 ): void {
+  if (!state) {
+    state = new Uint32Array(16);
+  }
   if (!initialState) {
     initialState = chaCha20InitState(key, nonce, counter);
   } else {
     initialState[12] = counter & 0xffffffff;
-  }
-  if (!state) {
-    state = new Uint32Array(16);
   }
   state.set(initialState);  
   let i: number;
