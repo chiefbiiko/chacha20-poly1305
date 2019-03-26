@@ -3,7 +3,7 @@ import {
 } from "./../poly1305_clamp/poly1305_clamp.ts";
 import {
   littleEndianBytesToBigInt,
-  BigIntToLittleEndianBytes
+  BigIntToSixteenLittleEndianBytes
 } from "./../util/util.ts";
 import {
   poly1305MsgBlockToBigInt
@@ -25,13 +25,13 @@ export function poly1305(
     littleEndianBytesToBigInt(otk.subarray(0, 16))
   );
   const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32));
+  const loopEnd: number = Math.ceil(msg.length / 16);
   let acc: bigint = 0n;
   let b: bigint;
-  const loopEnd: number = Math.ceil(msg.length / 16);
   for (let i: number = 1; i <= loopEnd; ++i) {
     b = poly1305MsgBlockToBigInt(msg, i * 16);
     acc = (r * (acc + b)) % PRIME1305;
   }
-  BigIntToLittleEndianBytes(acc + s, tag, 16);
+  BigIntToSixteenLittleEndianBytes(acc + s, tag);
   return tag;
 }

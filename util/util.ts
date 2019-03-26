@@ -32,12 +32,11 @@ export function littleEndianBytesToBigInt(x: Uint8Array): bigint {
 const BIGINT_BYTE_MASK: bigint = BigInt(0xff);
 const BIGINT_EIGHT: bigint = BigInt(8);
 
-export function BigIntToLittleEndianBytes(
+export function BigIntToSixteenLittleEndianBytes(
   b: bigint,
-  out: Uint8Array,
-  l: number
+  out: Uint8Array
 ): void {
-  for (let i: number = 0; i < l; ++i) {
+  for (let i: number = 0; i < 16; ++i) {
     out[i] = Number(b & BIGINT_BYTE_MASK);
     b >>= BIGINT_EIGHT;
   }
