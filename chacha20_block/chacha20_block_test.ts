@@ -1,6 +1,6 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { chaCha20Block, chaCha20InitState } from "./chacha20_block.ts";
+import { chaCha20Block } from "./chacha20_block.ts";
 import { hex2bytes } from "./../util/util.ts";
 
 const {
@@ -40,20 +40,6 @@ test(function chaCha20BlockBasic(): void {
   for (const { key, nonce, counter, expected } of loadTestVectors()) {
     chaCha20Block(key, nonce, counter, actual);
     assertEquals(actual, expected);
-  }
-});
-
-test(function chaCha20InitStateBasic(): void {
-  const constants: Uint32Array = Uint32Array.from([
-    0x61707865,
-    0x3320646e,
-    0x79622d32,
-    0x6b206574
-  ]);
-  for (const { key, nonce, counter } of loadTestVectors()) {
-    const initialState: Uint32Array = chaCha20InitState(key, nonce, counter);
-    assertEquals(initialState.length, 16);
-    assertEquals(initialState.subarray(0, 4), constants);
   }
 });
 

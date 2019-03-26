@@ -1,7 +1,5 @@
-import {
-  chaCha20Block,
-  chaCha20InitState
-} from "./../chacha20_block/chacha20_block.ts";
+import { chaCha20Block } from "./../chacha20_block/chacha20_block.ts";
+import { chaCha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
 import { xor } from "./../util/util.ts"
 
 export const KEY_BYTES: number = 32;
