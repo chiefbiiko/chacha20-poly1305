@@ -1,4 +1,6 @@
-import { chaCha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
+import {
+  chaCha20InitState
+} from "./../chacha20_init_state/chacha20_init_state.ts";
 import {
   chaCha20QuarterRound
 } from "./../chacha20_quarter_round/chacha20_quarter_round.ts";
@@ -33,9 +35,6 @@ export function chaCha20Block(
     chaCha20QuarterRound(state, 3, 4, 9, 14);
   }
   for (i = 0; i < 16; ++i) {
-    state[i] += initialState[i];
-  }
-  for (i = 0; i < 16; ++i) {
-    numberToLittleEndianBytes(state[i], out, 4, 4 * i);
+    numberToLittleEndianBytes(state[i] + initialState[i], out, 4, 4 * i);
   }
 }
