@@ -1,9 +1,8 @@
-import { poly1305KeyGen } from "./poly1305_key_gen/poly1305_key_gen.ts";
 import { chaCha20Cipher } from "./chacha20_cipher/chacha20_cipher.ts";
-import { zeroPad16 } from "./zero_pad16/zero_pad16.ts";
+import { poly1305KeyGen } from "./poly1305_key_gen/poly1305_key_gen.ts";
 import { poly1305 } from "./poly1305/poly1305.ts";
-import { numberToLittleEndianBytes } from "./util/util.ts";
 import { constantTimeEqual } from "./constant_time_equal/constant_time_equal.ts";
+import { aeadChaCha20Poly1305Construct } from "./aead_chacha20_poly1305_construct/aead_chacha20_poly1305_construct.ts"
 
 export const KEY_BYTES: number = 32;
 export const NONCE_BYTES: number = 12;
@@ -11,29 +10,6 @@ export const PLAINTEXT_BYTES_MAX: bigint = 274877906880n;
 export const CIPHERTEXT_BYTES_MAX: bigint = 274877906896n;
 export const AAD_BYTES_MAX: bigint = 18446744073709551615n;
 export const TAG_BYTES: number = 16;
-
-function writeAuthPac(ciphertext: Uint8Array, aad: Uint8Array): Uint8Array {
-  const paddedCiphertext: Uint8Array = zeroPad16(ciphertext);
-  const paddedAad: Uint8Array = zeroPad16(aad);
-  const pac: Uint8Array = new Uint8Array(
-    paddedAad.length + paddedCiphertext.length + 16
-  );
-  pac.set(paddedAad, 0);
-  pac.set(paddedCiphertext, paddedAad.length);
-  numberToLittleEndianBytes(
-    aad.length,
-    pac,
-    8,
-    paddedAad.length + paddedCiphertext.length
-  );
-  numberToLittleEndianBytes(
-    ciphertext.length,
-    pac,
-    8,
-    paddedAad.length + paddedCiphertext.length + 8
-  );
-  return pac;
-}
 
 export function aeadChaCha20Poly1305Seal(
   key: Uint8Array,
@@ -55,7 +31,7 @@ export function aeadChaCha20Poly1305Seal(
   }
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const ciphertext: Uint8Array = chaCha20Cipher(key, nonce, 1, plaintext);
-  const pac: Uint8Array = writeAuthPac(ciphertext, aad);
+  const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
   const tag: Uint8Array = poly1305(otk, pac);
   return { ciphertext, tag };
 }
@@ -83,7 +59,7 @@ export function aeadChaCha20Poly1305Open(
     throw new TypeError(`receivedTag must have ${TAG_BYTES} bytes`);
   }
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
-  const pac: Uint8Array = writeAuthPac(ciphertext, aad);
+  const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
   const tag: Uint8Array = poly1305(otk, pac);
   if (!constantTimeEqual(receivedTag, tag)) {
     return null;

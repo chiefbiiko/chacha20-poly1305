@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { chaCha20Block, chaCha20InitState } from "./chacha20_block.ts";
-import { hex2bin } from "./../util/util.ts";
+import { hex2bytes } from "./../util/util.ts";
 
 const {
   readFileSync,
@@ -27,10 +27,10 @@ function loadTestVectors(): TestVector[] {
   );
   return testVectors.map(
     (testVector: { [key: string]: any }): TestVector => ({
-      key: hex2bin(testVector.key),
-      nonce: hex2bin(testVector.nonce),
+      key: hex2bytes(testVector.key),
+      nonce: hex2bytes(testVector.nonce),
       counter: testVector.counter,
-      expected: hex2bin(testVector.expected)
+      expected: hex2bytes(testVector.expected)
     })
   );
 }

@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { chaCha20Cipher } from "./chacha20_cipher.ts";
-import { hex2bin } from "./../util/util.ts";
+import { hex2bytes } from "./../util/util.ts";
 
 const { readFileSync, platform: { os } } = Deno;
 
@@ -23,11 +23,11 @@ function loadTestVectors(): TestVector[] {
     )
   );
   return testVectors.map((testVector: { [key: string]: any }): TestVector => ({
-    key: hex2bin(testVector.key),
-    nonce: hex2bin(testVector.nonce),
+    key: hex2bytes(testVector.key),
+    nonce: hex2bytes(testVector.nonce),
     counter: testVector.counter,
-    plaintext: hex2bin(testVector.plaintext),
-    ciphertext: hex2bin(testVector.ciphertext)
+    plaintext: hex2bytes(testVector.plaintext),
+    ciphertext: hex2bytes(testVector.ciphertext)
   }));
 }
 

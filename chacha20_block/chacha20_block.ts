@@ -2,7 +2,7 @@ import {
   chaCha20QuarterRound
 } from "./../chacha20_quarter_round/chacha20_quarter_round.ts";
 import {
-  numberToFourLittleEndianBytes,
+  numberToLittleEndianBytes,
   fourLittleEndianBytesToNumber
 } from "./../util/util.ts";
 
@@ -47,7 +47,7 @@ export function chaCha20Block(
   } else {
     initialState[12] = counter & 0xffffffff;
   }
-  state.set(initialState);  
+  state.set(initialState);
   let i: number;
   for (i = 0; i < 10; ++i) {
     chaCha20QuarterRound(state, 0, 4, 8, 12);
@@ -63,6 +63,6 @@ export function chaCha20Block(
     state[i] += initialState[i];
   }
   for (i = 0; i < 16; ++i) {
-    numberToFourLittleEndianBytes(out, 4 * i, state[i]);
+    numberToLittleEndianBytes(state[i], out, 4, 4 * i);
   }
 }

@@ -4,7 +4,7 @@ import {
   aeadChaCha20Poly1305Seal,
   aeadChaCha20Poly1305Open
 } from "./aead_chacha20_poly1305.ts";
-import { hex2bin } from "./util/util.ts";
+import { hex2bytes } from "./util/util.ts";
 
 const { readFileSync } = Deno;
 
@@ -24,12 +24,12 @@ function loadTestVectors(): TestVector[] {
     )
   );
   return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
-    key: hex2bin(testVector.key),
-    nonce: hex2bin(testVector.nonce),
-    plaintext: hex2bin(testVector.plaintext),
-    aad: hex2bin(testVector.aad),
-    ciphertext: hex2bin(testVector.ciphertext),
-    tag: hex2bin(testVector.tag)
+    key: hex2bytes(testVector.key),
+    nonce: hex2bytes(testVector.nonce),
+    plaintext: hex2bytes(testVector.plaintext),
+    aad: hex2bytes(testVector.aad),
+    ciphertext: hex2bytes(testVector.ciphertext),
+    tag: hex2bytes(testVector.tag)
   }));
 }
 

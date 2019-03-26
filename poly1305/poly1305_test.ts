@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { poly1305 } from "./poly1305.ts";
-import { hex2bin } from "./../util/util.ts";
+import { hex2bytes } from "./../util/util.ts";
 
 const { readFileSync, platform: { os } } = Deno;
 
@@ -19,9 +19,9 @@ function loadTestVectors(): TestVector[] {
     new TextDecoder().decode(readFileSync(`${DIRNAME}/poly1305_test_vectors.json`))
   );
   return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
-    otk: hex2bin(testVector.otk),
-    msg: hex2bin(testVector.msg),
-    tag: hex2bin(testVector.tag)
+    otk: hex2bytes(testVector.otk),
+    msg: hex2bytes(testVector.msg),
+    tag: hex2bytes(testVector.tag)
   }));
 }
 
