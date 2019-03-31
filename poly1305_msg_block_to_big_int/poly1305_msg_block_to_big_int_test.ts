@@ -14,18 +14,19 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(readFileSync(`${DIRNAME}/poly1305_msg_block_to_big_int_test_vectors.json`))
-  );
-  return testVectors.map((testVector: { msg: string, expected: string[] }): TestVector => ({
+  ).map((testVector: { msg: string, expected: string[] }): TestVector => ({
     msg: hex2bytes(testVector.msg),
     expected: testVector.expected.map(BigInt)
   }));
 }
 
+const testVectors: TestVector[] = loadTestVectors();
+
 test(function poly1305MsgBlockToBigIntBasic(): void {
   let b: bigint;
-  for (const { msg, expected } of loadTestVectors()) {
+  for (const { msg, expected } of testVectors) {
     const loopEnd: number = Math.ceil(msg.length / 16);
     for (let i: number = 1; i <= loopEnd; ++i) {
       b = poly1305MsgBlockToBigInt(msg, i * 16);

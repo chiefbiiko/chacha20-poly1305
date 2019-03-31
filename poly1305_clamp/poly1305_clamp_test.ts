@@ -24,4 +24,4 @@ test(function poly1305ClampLittleEndianBigIntBasic(): void {
   assertEquals(actual, expected);
 });
 
-runIfMain(import.meta);
+runIfMain(import.meta, { parallel: true });

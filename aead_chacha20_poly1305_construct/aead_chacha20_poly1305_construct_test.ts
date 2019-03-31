@@ -15,18 +15,19 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(readFileSync(`${DIRNAME}/aead_chacha20_poly1305_construct_test_vectors.json`))
-  );
-  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
+  ).map((testVector: { [key: string]: string }): TestVector => ({
     ciphertext: hex2bytes(testVector.ciphertext),
     aad: hex2bytes(testVector.aad),
     expected: hex2bytes(testVector.expected)
   }));
 }
 
+const testVectors: TestVector[] = loadTestVectors();
+
 test(function aeadChaCha20Poly1305ConstructBasic(): void {
-  for (const { ciphertext, aad, expected } of loadTestVectors()) {
+  for (const { ciphertext, aad, expected } of testVectors) {
     assertEquals(aeadChaCha20Poly1305Construct(ciphertext, aad), expected);
   }
 });

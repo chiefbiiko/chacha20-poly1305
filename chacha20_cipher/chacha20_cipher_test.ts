@@ -17,12 +17,11 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/chacha20_cipher_test_vectors.json`)
     )
-  );
-  return testVectors.map((testVector: { [key: string]: any }): TestVector => ({
+  ).map((testVector: { [key: string]: any }): TestVector => ({
     key: hex2bytes(testVector.key),
     nonce: hex2bytes(testVector.nonce),
     counter: testVector.counter,

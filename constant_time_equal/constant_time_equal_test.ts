@@ -48,7 +48,7 @@ test(function constantTimeEqualTiming(): void {
     timings.push(Date.now() - start);
   }
   const stdDev: number = standardDeviation(timings);
-  assert(stdDev < .1); // lt 100 microseconds
+  assert(stdDev < .3); // lt 300 microseconds
 });
 
 runIfMain(import.meta, { parallel: true });

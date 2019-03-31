@@ -13,4 +13,4 @@ import "./poly1305_msg_block_to_big_int/poly1305_msg_block_to_big_int_test.ts";
 import "./aead_chacha20_poly1305_construct/aead_chacha20_poly1305_construct_test.ts";
 import "./aead_chacha20_poly1305_test.ts";
 
-runIfMain(import.meta, { parallel: false });
+runIfMain(import.meta, { parallel: true });

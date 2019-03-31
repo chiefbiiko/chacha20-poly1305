@@ -15,20 +15,21 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/poly1305_key_gen_test_vectors.json`)
     )
-  );
-  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
+  ).map((testVector: { [key: string]: string }): TestVector => ({
     key: hex2bytes(testVector.key),
     nonce: hex2bytes(testVector.nonce),
     otk: hex2bytes(testVector.otk)
   }));
 }
 
+const testVectors: TestVector[] = loadTestVectors();
+
 test(function poly1305KeyGenBasic(): void {
-  for (const { key, nonce, otk } of loadTestVectors()) {
+  for (const { key, nonce, otk } of testVectors) {
     assertEquals(poly1305KeyGen(key, nonce), otk);
   }
 });

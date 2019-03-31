@@ -14,24 +14,25 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/chacha20_quarter_round_test_vectors.json`)
     )
-  );
-  return testVectors.map((testVector: { [key: string]: any }): TestVector => ({
+  ).map((testVector: { [key: string]: any }): TestVector => ({
     initialState: Uint32Array.from(testVector.initialState),
     quarterRoundParameters: testVector.quarterRoundParameters,
     expectedState: Uint32Array.from(testVector.expectedState)
   }));
 }
 
+const testVectors: TestVector[] = loadTestVectors();
+
 test(function chaCha20QuarterRoundBasic(): void {
   for (const {
       initialState,
       quarterRoundParameters: [a, b, c, d],
       expectedState
-    } of loadTestVectors()) {
+    } of testVectors) {
     const state = Uint32Array.from(initialState);
     chaCha20QuarterRound(state, a, b, c, d);
     assertEquals(state, expectedState);

@@ -1,5 +1,5 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std/testing/asserts.ts";
 import {
   aeadChaCha20Poly1305Seal,
   aeadChaCha20Poly1305Open
@@ -18,12 +18,11 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(
       readFileSync("./aead_chacha20_poly1305_test_vectors.json")
     )
-  );
-  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
+  ).map((testVector: { [key: string]: string }): TestVector => ({
     key: hex2bytes(testVector.key),
     nonce: hex2bytes(testVector.nonce),
     plaintext: hex2bytes(testVector.plaintext),
@@ -69,7 +68,7 @@ test(function aeadChaCha20Poly1305OpenBasic(): void {
   }
 });
 
-test(function aeadChaCha20Poly1305OpenNullIfNotAuthenticated(): void {
+test(function aeadChaCha20Poly1305OpenNullsIfNotAuthenticated(): void {
   const receivedTag: Uint8Array = new Uint8Array(16);
   for (const { key, nonce, aad, ciphertext } of testVectors) {
     assertEquals(
@@ -77,6 +76,38 @@ test(function aeadChaCha20Poly1305OpenNullIfNotAuthenticated(): void {
       null
     );
   }
+});
+
+test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectKeyBytes(): void {
+  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
+  assertThrows(
+    aeadChaCha20Poly1305Open.bind(null, key.subarray(-9), nonce, ciphertext, aad, tag),
+    TypeError
+  );
+});
+
+test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectNonceBytes(): void {
+  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
+  assertThrows(
+    aeadChaCha20Poly1305Open.bind(null, key, nonce.subarray(-9), ciphertext, aad, tag),
+    TypeError
+  );
+});
+
+test(function aeadChaCha20Poly1305SealThrowsIfIncorrectKeyBytes(): void {
+  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
+  assertThrows(
+    aeadChaCha20Poly1305Seal.bind(null, key.subarray(-9), nonce, ciphertext, aad, tag),
+    TypeError
+  );
+});
+
+test(function aeadChaCha20Poly1305SealThrowsIfIncorrectNonceBytes(): void {
+  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
+  assertThrows(
+    aeadChaCha20Poly1305Seal.bind(null, key, nonce.subarray(-9), ciphertext, aad, tag),
+    TypeError
+  );
 });
 
 runIfMain(import.meta, { parallel: true });

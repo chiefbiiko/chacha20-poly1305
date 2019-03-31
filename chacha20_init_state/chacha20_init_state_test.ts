@@ -20,12 +20,11 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/chacha20_init_state_test_vectors.json`)
     )
-  );
-  return testVectors.map(
+  ).map(
     (testVector: { [key: string]: any }): TestVector => ({
       key: hex2bytes(testVector.key),
       nonce: hex2bytes(testVector.nonce),
@@ -57,4 +56,4 @@ test(function chaCha20InitStateBasic(): void {
   }
 });
 
-runIfMain(import.meta, { parallel: false });
+runIfMain(import.meta, { parallel: true });

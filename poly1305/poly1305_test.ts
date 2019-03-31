@@ -15,10 +15,9 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(readFileSync(`${DIRNAME}/poly1305_test_vectors.json`))
-  );
-  return testVectors.map((testVector: { [key: string]: string }): TestVector => ({
+  ).map((testVector: { [key: string]: string }): TestVector => ({
     otk: hex2bytes(testVector.otk),
     msg: hex2bytes(testVector.msg),
     tag: hex2bytes(testVector.tag)
@@ -41,4 +40,4 @@ test(function poly1305Basic(): void {
 //   }
 // });
 
-runIfMain(import.meta);
+runIfMain(import.meta, { parallel: true });

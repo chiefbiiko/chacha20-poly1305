@@ -20,12 +20,11 @@ interface TestVector {
 }
 
 function loadTestVectors(): TestVector[] {
-  const testVectors = JSON.parse(
+  return JSON.parse(
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/chacha20_block_test_vectors.json`)
     )
-  );
-  return testVectors.map(
+  ).map(
     (testVector: { [key: string]: any }): TestVector => ({
       key: hex2bytes(testVector.key),
       nonce: hex2bytes(testVector.nonce),
@@ -35,9 +34,11 @@ function loadTestVectors(): TestVector[] {
   );
 }
 
+const testVectors: TestVector[] = loadTestVectors();
+
 test(function chaCha20BlockBasic(): void {
   const actual: Uint8Array = new Uint8Array(64);
-  for (const { key, nonce, counter, expected } of loadTestVectors()) {
+  for (const { key, nonce, counter, expected } of testVectors) {
     chaCha20Block(key, nonce, counter, actual);
     assertEquals(actual, expected);
   }
@@ -47,10 +48,10 @@ test(function chaCha20BlockAcceptsExternalState(): void {
   const actual: Uint8Array = new Uint8Array(64);
   const state: Uint32Array = new Uint32Array(16);
   let initialState: Uint32Array;
-  for (const { key, nonce, counter, expected } of loadTestVectors()) {
+  for (const { key, nonce, counter, expected } of  testVectors) {
     chaCha20Block(key, nonce, counter, actual, state, initialState);
     assertEquals(actual, expected);
   }
 });
 
-runIfMain(import.meta);
+runIfMain(import.meta, { parallel: true });
