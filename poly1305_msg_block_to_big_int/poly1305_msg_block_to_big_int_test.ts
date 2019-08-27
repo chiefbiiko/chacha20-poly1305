@@ -1,38 +1,46 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 import { poly1305MsgBlockToBigInt } from "./poly1305_msg_block_to_big_int.ts";
-import { hex2bytes } from "./../util/util.ts";
 
-const { readFileSync, platform: { os } } = Deno;
+const {
+  readFileSync,
+  platform: { os }
+} = Deno;
 
-const DIRNAME = (os !== "win" ? "/" : "") +
+const DIRNAME =
+  (os !== "win" ? "/" : "") +
   import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
 
 interface TestVector {
   msg: Uint8Array;
-  expected: bigint[]
+  expected: bigint[];
 }
 
 function loadTestVectors(): TestVector[] {
   return JSON.parse(
-    new TextDecoder().decode(readFileSync(`${DIRNAME}/poly1305_msg_block_to_big_int_test_vectors.json`))
-  ).map((testVector: { msg: string, expected: string[] }): TestVector => ({
-    msg: hex2bytes(testVector.msg),
-    expected: testVector.expected.map(BigInt)
-  }));
+    new TextDecoder().decode(
+      readFileSync(`${DIRNAME}/poly1305_msg_block_to_big_int_test_vectors.json`)
+    )
+  ).map(
+    (testVector: { msg: string; expected: string[] }): TestVector => ({
+      msg: encode(testVector.msg, "hex"),
+      expected: testVector.expected.map(BigInt)
+    })
+  );
 }
 
 const testVectors: TestVector[] = loadTestVectors();
 
 test(function poly1305MsgBlockToBigIntBasic(): void {
   let b: bigint;
-  
+
   for (const { msg, expected } of testVectors) {
     const loopEnd: number = Math.ceil(msg.length / 16);
-    
+
     for (let i: number = 1; i <= loopEnd; ++i) {
       b = poly1305MsgBlockToBigInt(msg, i * 16);
-      assertEquals(b, expected.shift())
+      assertEquals(b, expected.shift());
     }
   }
 });

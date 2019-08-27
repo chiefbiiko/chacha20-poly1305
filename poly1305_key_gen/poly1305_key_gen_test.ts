@@ -1,11 +1,15 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 import { poly1305KeyGen } from "./poly1305_key_gen.ts";
-import { hex2bytes } from "./../util/util.ts";
 
-const { readFileSync, platform: { os } } = Deno;
+const {
+  readFileSync,
+  platform: { os }
+} = Deno;
 
-const DIRNAME = (os !== "win" ? "/" : "") +
+const DIRNAME =
+  (os !== "win" ? "/" : "") +
   import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
 
 interface TestVector {
@@ -19,11 +23,13 @@ function loadTestVectors(): TestVector[] {
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/poly1305_key_gen_test_vectors.json`)
     )
-  ).map((testVector: { [key: string]: string }): TestVector => ({
-    key: hex2bytes(testVector.key),
-    nonce: hex2bytes(testVector.nonce),
-    otk: hex2bytes(testVector.otk)
-  }));
+  ).map(
+    (testVector: { [key: string]: string }): TestVector => ({
+      key: encode(testVector.key, "hex"),
+      nonce: encode(testVector.nonce, "hex"),
+      otk: encode(testVector.otk, "hex")
+    })
+  );
 }
 
 const testVectors: TestVector[] = loadTestVectors();

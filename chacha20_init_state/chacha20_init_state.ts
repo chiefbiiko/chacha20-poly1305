@@ -3,10 +3,10 @@ import { fourLittleEndianBytesToNumber } from "./../util/util.ts";
 export function chaCha20InitState(
   key: Uint8Array,
   nonce: Uint8Array,
-  counter: number,
+  counter: number
 ): Uint32Array {
   const state = new Uint32Array(16);
-  
+
   state[0] = 0x61707865;
   state[1] = 0x3320646e;
   state[2] = 0x79622d32;
@@ -23,6 +23,6 @@ export function chaCha20InitState(
   state[13] = fourLittleEndianBytesToNumber(nonce, 0);
   state[14] = fourLittleEndianBytesToNumber(nonce, 4);
   state[15] = fourLittleEndianBytesToNumber(nonce, 8);
-  
+
   return state;
 }

@@ -1,10 +1,13 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { assertEquals, assertThrows } from "https://deno.land/std/testing/asserts.ts";
+import {
+  assertEquals,
+  assertThrows
+} from "https://deno.land/std/testing/asserts.ts";
 import {
   aeadChaCha20Poly1305Seal,
   aeadChaCha20Poly1305Open
 } from "./aead_chacha20_poly1305.ts";
-import { hex2bytes } from "./util/util.ts";
+import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 
 const { readFileSync } = Deno;
 
@@ -22,46 +25,34 @@ function loadTestVectors(): TestVector[] {
     new TextDecoder().decode(
       readFileSync("./aead_chacha20_poly1305_test_vectors.json")
     )
-  ).map((testVector: { [key: string]: string }): TestVector => ({
-    key: hex2bytes(testVector.key),
-    nonce: hex2bytes(testVector.nonce),
-    plaintext: hex2bytes(testVector.plaintext),
-    aad: hex2bytes(testVector.aad),
-    ciphertext: hex2bytes(testVector.ciphertext),
-    tag: hex2bytes(testVector.tag)
-  }));
+  ).map(
+    (testVector: { [key: string]: string }): TestVector => ({
+      key: encode(testVector.key, "hex"),
+      nonce: encode(testVector.nonce, "hex"),
+      plaintext: encode(testVector.plaintext, "hex"),
+      aad: encode(testVector.aad, "hex"),
+      ciphertext: encode(testVector.ciphertext, "hex"),
+      tag: encode(testVector.tag, "hex")
+    })
+  );
 }
 
 const testVectors: TestVector[] = loadTestVectors();
 
 test(function aeadChaCha20Poly1305SealBasic(): void {
-  for (const {
-      key,
-      nonce,
-      plaintext,
-      aad,
-      ciphertext,
-      tag
-    } of testVectors) {
+  for (const { key, nonce, plaintext, aad, ciphertext, tag } of testVectors) {
     const actual: {
       ciphertext: Uint8Array;
       tag: Uint8Array;
     } = aeadChaCha20Poly1305Seal(key, nonce, plaintext, aad);
-    
+
     assertEquals(actual.ciphertext, ciphertext);
     assertEquals(actual.tag, tag);
   }
 });
 
 test(function aeadChaCha20Poly1305OpenBasic(): void {
-  for (const {
-      key,
-      nonce,
-      plaintext,
-      aad,
-      ciphertext,
-      tag
-    } of testVectors) {
+  for (const { key, nonce, plaintext, aad, ciphertext, tag } of testVectors) {
     assertEquals(
       aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, tag),
       plaintext
@@ -82,7 +73,14 @@ test(function aeadChaCha20Poly1305OpenNullsIfNotAuthenticated(): void {
 test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectKeyBytes(): void {
   const { key, nonce, ciphertext, aad, tag } = testVectors[0];
   assertThrows(
-    aeadChaCha20Poly1305Open.bind(null, key.subarray(-9), nonce, ciphertext, aad, tag),
+    aeadChaCha20Poly1305Open.bind(
+      null,
+      key.subarray(-9),
+      nonce,
+      ciphertext,
+      aad,
+      tag
+    ),
     TypeError
   );
 });
@@ -90,7 +88,14 @@ test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectKeyBytes(): void {
 test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectNonceBytes(): void {
   const { key, nonce, ciphertext, aad, tag } = testVectors[0];
   assertThrows(
-    aeadChaCha20Poly1305Open.bind(null, key, nonce.subarray(-9), ciphertext, aad, tag),
+    aeadChaCha20Poly1305Open.bind(
+      null,
+      key,
+      nonce.subarray(-9),
+      ciphertext,
+      aad,
+      tag
+    ),
     TypeError
   );
 });
@@ -98,7 +103,14 @@ test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectNonceBytes(): void {
 test(function aeadChaCha20Poly1305SealThrowsIfIncorrectKeyBytes(): void {
   const { key, nonce, ciphertext, aad, tag } = testVectors[0];
   assertThrows(
-    aeadChaCha20Poly1305Seal.bind(null, key.subarray(-9), nonce, ciphertext, aad, tag),
+    aeadChaCha20Poly1305Seal.bind(
+      null,
+      key.subarray(-9),
+      nonce,
+      ciphertext,
+      aad,
+      tag
+    ),
     TypeError
   );
 });
@@ -106,7 +118,14 @@ test(function aeadChaCha20Poly1305SealThrowsIfIncorrectKeyBytes(): void {
 test(function aeadChaCha20Poly1305SealThrowsIfIncorrectNonceBytes(): void {
   const { key, nonce, ciphertext, aad, tag } = testVectors[0];
   assertThrows(
-    aeadChaCha20Poly1305Seal.bind(null, key, nonce.subarray(-9), ciphertext, aad, tag),
+    aeadChaCha20Poly1305Seal.bind(
+      null,
+      key,
+      nonce.subarray(-9),
+      ciphertext,
+      aad,
+      tag
+    ),
     TypeError
   );
 });

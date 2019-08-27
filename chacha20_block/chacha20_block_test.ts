@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 import { chaCha20Block } from "./chacha20_block.ts";
-import { hex2bytes } from "./../util/util.ts";
 
 const {
   readFileSync,
@@ -26,10 +26,10 @@ function loadTestVectors(): TestVector[] {
     )
   ).map(
     (testVector: { [key: string]: any }): TestVector => ({
-      key: hex2bytes(testVector.key),
-      nonce: hex2bytes(testVector.nonce),
+      key: encode(testVector.key, "hex"),
+      nonce: encode(testVector.nonce, "hex"),
       counter: testVector.counter,
-      expected: hex2bytes(testVector.expected)
+      expected: encode(testVector.expected, "hex")
     })
   );
 }
@@ -38,7 +38,7 @@ const testVectors: TestVector[] = loadTestVectors();
 
 test(function chaCha20BlockBasic(): void {
   const actual: Uint8Array = new Uint8Array(64);
-  
+
   for (const { key, nonce, counter, expected } of testVectors) {
     chaCha20Block(key, nonce, counter, actual);
     assertEquals(actual, expected);
@@ -49,8 +49,8 @@ test(function chaCha20BlockAcceptsExternalState(): void {
   const actual: Uint8Array = new Uint8Array(64);
   const state: Uint32Array = new Uint32Array(16);
   let initialState: Uint32Array;
-  
-  for (const { key, nonce, counter, expected } of  testVectors) {
+
+  for (const { key, nonce, counter, expected } of testVectors) {
     chaCha20Block(key, nonce, counter, actual, state, initialState);
     assertEquals(actual, expected);
   }

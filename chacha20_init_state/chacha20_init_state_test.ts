@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 import { chaCha20InitState } from "./chacha20_init_state.ts";
-import { hex2bytes } from "./../util/util.ts";
 
 const {
   readFileSync,
@@ -26,8 +26,8 @@ function loadTestVectors(): TestVector[] {
     )
   ).map(
     (testVector: { [key: string]: any }): TestVector => ({
-      key: hex2bytes(testVector.key),
-      nonce: hex2bytes(testVector.nonce),
+      key: encode(testVector.key, "hex"),
+      nonce: encode(testVector.nonce, "hex"),
       counter: testVector.counter,
       expected: Uint32Array.from(testVector.expected)
     })
@@ -43,7 +43,7 @@ test(function chaCha20InitStateConstants(): void {
     0x79622d32,
     0x6b206574
   ]);
-  
+
   for (const { key, nonce, counter } of testVectors) {
     const initialState: Uint32Array = chaCha20InitState(key, nonce, counter);
     assertEquals(initialState.length, 16);

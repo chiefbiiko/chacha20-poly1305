@@ -1,11 +1,15 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 import { chaCha20Cipher } from "./chacha20_cipher.ts";
-import { hex2bytes } from "./../util/util.ts";
 
-const { readFileSync, platform: { os } } = Deno;
+const {
+  readFileSync,
+  platform: { os }
+} = Deno;
 
-const DIRNAME = (os !== "win" ? "/" : "") +
+const DIRNAME =
+  (os !== "win" ? "/" : "") +
   import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
 
 interface TestVector {
@@ -21,13 +25,15 @@ function loadTestVectors(): TestVector[] {
     new TextDecoder().decode(
       readFileSync(`${DIRNAME}/chacha20_cipher_test_vectors.json`)
     )
-  ).map((testVector: { [key: string]: any }): TestVector => ({
-    key: hex2bytes(testVector.key),
-    nonce: hex2bytes(testVector.nonce),
-    counter: testVector.counter,
-    plaintext: hex2bytes(testVector.plaintext),
-    ciphertext: hex2bytes(testVector.ciphertext)
-  }));
+  ).map(
+    (testVector: { [key: string]: any }): TestVector => ({
+      key: encode(testVector.key, "hex"),
+      nonce: encode(testVector.nonce, "hex"),
+      counter: testVector.counter,
+      plaintext: encode(testVector.plaintext, "hex"),
+      ciphertext: encode(testVector.ciphertext, "hex")
+    })
+  );
 }
 
 const testVectors: TestVector[] = loadTestVectors();
