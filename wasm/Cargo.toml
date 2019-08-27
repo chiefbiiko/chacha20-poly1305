@@ -1,0 +1,15 @@
+[package]
+name = "wasm"
+version = "0.1.0"
+authors = ["Noah Anabiik Schwarz <noah.anabiik.schwarz@gmail.com>"]
+edition = "2018"
+description = "AEAD_CHACH20_POLY1305 in wasm"
+repository = "https://github.com/chiefbiiko/aead_chacha20_poly1305.git"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2.50"
+chacha20-poly1305-aead = "0.1.2"
