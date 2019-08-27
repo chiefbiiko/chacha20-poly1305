@@ -31,20 +31,26 @@ function loadTestVectors(): TestVector[] {
   );
 }
 
-const testVectors: TestVector[] = loadTestVectors();
+loadTestVectors().forEach(
+  (
+    {
+      initialState,
+      quarterRoundParameters: [a, b, c, d],
+      expectedState
+    }: TestVector,
+    i: number
+  ): void => {
+    test({
+      name: `chaCha20QuarterRound [${i}]`,
+      fn(): void {
+        const state = Uint32Array.from(initialState);
 
-test(function chaCha20QuarterRoundBasic(): void {
-  for (const {
-    initialState,
-    quarterRoundParameters: [a, b, c, d],
-    expectedState
-  } of testVectors) {
-    const state = Uint32Array.from(initialState);
+        chaCha20QuarterRound(state, a, b, c, d);
 
-    chaCha20QuarterRound(state, a, b, c, d);
-
-    assertEquals(state, expectedState);
+        assertEquals(state, expectedState);
+      }
+    });
   }
-});
+);
 
 runIfMain(import.meta);

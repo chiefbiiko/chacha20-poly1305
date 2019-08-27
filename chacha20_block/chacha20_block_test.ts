@@ -36,24 +36,36 @@ function loadTestVectors(): TestVector[] {
 
 const testVectors: TestVector[] = loadTestVectors();
 
-test(function chaCha20BlockBasic(): void {
-  const actual: Uint8Array = new Uint8Array(64);
+testVectors.forEach(
+  ({ key, nonce, counter, expected }: TestVector, i: number): void => {
+    test({
+      name: `chaCha20Block [${i}]`,
+      fn(): void {
+        const actual: Uint8Array = new Uint8Array(64);
 
-  for (const { key, nonce, counter, expected } of testVectors) {
-    chaCha20Block(key, nonce, counter, actual);
-    assertEquals(actual, expected);
+        chaCha20Block(key, nonce, counter, actual);
+
+        assertEquals(actual, expected);
+      }
+    });
   }
-});
+);
 
-test(function chaCha20BlockAcceptsExternalState(): void {
-  const actual: Uint8Array = new Uint8Array(64);
-  const state: Uint32Array = new Uint32Array(16);
-  let initialState: Uint32Array;
+testVectors.forEach(
+  ({ key, nonce, counter, expected }: TestVector, i: number): void => {
+    test({
+      name: `chaCha20Block accepts external state [${i}]`,
+      fn(): void {
+        const actual: Uint8Array = new Uint8Array(64);
+        const state: Uint32Array = new Uint32Array(16);
+        let initialState: Uint32Array;
 
-  for (const { key, nonce, counter, expected } of testVectors) {
-    chaCha20Block(key, nonce, counter, actual, state, initialState);
-    assertEquals(actual, expected);
+        chaCha20Block(key, nonce, counter, actual, state, initialState);
+
+        assertEquals(actual, expected);
+      }
+    });
   }
-});
+);
 
 runIfMain(import.meta, { parallel: true });

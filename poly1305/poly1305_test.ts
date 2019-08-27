@@ -33,18 +33,16 @@ function loadTestVectors(): TestVector[] {
 }
 
 const testVectors: TestVector[] = loadTestVectors();
-const edgeCases: TestVector[] = testVectors.splice(-2);
 
-test(function poly1305Basic(): void {
-  for (const { otk, msg, tag } of testVectors) {
-    assertEquals(poly1305(otk, msg), tag);
+testVectors.forEach(
+  ({ otk, msg, tag }: TestVector, i: number): void => {
+    test({
+      name: `poly1305 [${i}]`,
+      fn(): void {
+        assertEquals(poly1305(otk, msg), tag);
+      }
+    });
   }
-});
-
-// test(function poly1305EdgeCases(): void {
-//   for (const { otk, msg, tag } of edgeCases) {
-//     assertEquals(poly1305(otk, msg), tag);
-//   }
-// });
+);
 
 runIfMain(import.meta, { parallel: true });

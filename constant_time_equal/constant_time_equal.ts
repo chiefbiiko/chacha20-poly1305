@@ -1,11 +1,7 @@
 export function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length) {
-    throw new TypeError("a and b must have the same length");
-  }
+  let diff: number = a.length === b.length ? 0 : 1;
 
-  let diff: number = 0;
-
-  for (let i: number = a.length - 1; i >= 0; --i) {
+  for (let i: number = Math.max(a.length, b.length) - 1; i >= 0; --i) {
     diff |= a[i] ^ b[i];
   }
 

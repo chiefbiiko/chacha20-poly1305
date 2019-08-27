@@ -38,16 +38,38 @@ function loadTestVectors(): TestVector[] {
 
 const testVectors: TestVector[] = loadTestVectors();
 
-test(function chaCha20Encryption(): void {
-  for (const { key, nonce, counter, plaintext, ciphertext } of testVectors) {
-    assertEquals(chaCha20Cipher(key, nonce, counter, plaintext), ciphertext);
+testVectors.forEach(
+  (
+    { key, nonce, counter, plaintext, ciphertext }: TestVector,
+    i: number
+  ): void => {
+    test({
+      name: `chaCha20 encryption [${i}]`,
+      fn(): void {
+        assertEquals(
+          chaCha20Cipher(key, nonce, counter, plaintext),
+          ciphertext
+        );
+      }
+    });
   }
-});
+);
 
-test(function chaCha20Decryption(): void {
-  for (const { key, nonce, counter, plaintext, ciphertext } of testVectors) {
-    assertEquals(chaCha20Cipher(key, nonce, counter, ciphertext), plaintext);
+testVectors.forEach(
+  (
+    { key, nonce, counter, plaintext, ciphertext }: TestVector,
+    i: number
+  ): void => {
+    test({
+      name: `chaCha20 decryption [${i}]`,
+      fn(): void {
+        assertEquals(
+          chaCha20Cipher(key, nonce, counter, ciphertext),
+          plaintext
+        );
+      }
+    });
   }
-});
+);
 
 runIfMain(import.meta, { parallel: true });

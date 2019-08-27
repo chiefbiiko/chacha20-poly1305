@@ -34,12 +34,15 @@ function loadTestVectors(): TestVector[] {
   );
 }
 
-const testVectors: TestVector[] = loadTestVectors();
-
-test(function aeadChaCha20Poly1305ConstructBasic(): void {
-  for (const { ciphertext, aad, expected } of testVectors) {
-    assertEquals(aeadChaCha20Poly1305Construct(ciphertext, aad), expected);
+loadTestVectors().forEach(
+  ({ ciphertext, aad, expected }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Construct [${i}]`,
+      fn(): void {
+        assertEquals(aeadChaCha20Poly1305Construct(ciphertext, aad), expected);
+      }
+    });
   }
-});
+);
 
 runIfMain(import.meta);

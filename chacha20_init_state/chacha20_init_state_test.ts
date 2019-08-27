@@ -36,25 +36,40 @@ function loadTestVectors(): TestVector[] {
 
 const testVectors: TestVector[] = loadTestVectors();
 
-test(function chaCha20InitStateConstants(): void {
-  const constants: Uint32Array = Uint32Array.from([
-    0x61707865,
-    0x3320646e,
-    0x79622d32,
-    0x6b206574
-  ]);
+const constants: Uint32Array = Uint32Array.from([
+  0x61707865,
+  0x3320646e,
+  0x79622d32,
+  0x6b206574
+]);
 
-  for (const { key, nonce, counter } of testVectors) {
-    const initialState: Uint32Array = chaCha20InitState(key, nonce, counter);
-    assertEquals(initialState.length, 16);
-    assertEquals(initialState.subarray(0, 4), constants);
-  }
-});
+testVectors.forEach(
+  ({ key, nonce, counter }: TestVector, i: number): void => {
+    test({
+      name: `chaCha20InitState constants [${i}]`,
+      fn(): void {
+        const initialState: Uint32Array = chaCha20InitState(
+          key,
+          nonce,
+          counter
+        );
 
-test(function chaCha20InitStateBasic(): void {
-  for (const { key, nonce, counter, expected } of testVectors) {
-    assertEquals(chaCha20InitState(key, nonce, counter), expected);
+        assertEquals(initialState.length, 16);
+        assertEquals(initialState.subarray(0, 4), constants);
+      }
+    });
   }
-});
+);
+
+testVectors.forEach(
+  ({ key, nonce, counter, expected }: TestVector, i: number): void => {
+    test({
+      name: `chaCha20InitState [${i}]`,
+      fn(): void {
+        assertEquals(chaCha20InitState(key, nonce, counter), expected);
+      }
+    });
+  }
+);
 
 runIfMain(import.meta, { parallel: true });
