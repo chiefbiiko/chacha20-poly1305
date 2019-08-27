@@ -34,7 +34,9 @@ test(function chaCha20QuarterRoundBasic(): void {
       expectedState
     } of testVectors) {
     const state = Uint32Array.from(initialState);
+    
     chaCha20QuarterRound(state, a, b, c, d);
+    
     assertEquals(state, expectedState);
   }
 });

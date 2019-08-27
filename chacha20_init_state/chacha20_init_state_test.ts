@@ -43,6 +43,7 @@ test(function chaCha20InitStateConstants(): void {
     0x79622d32,
     0x6b206574
   ]);
+  
   for (const { key, nonce, counter } of testVectors) {
     const initialState: Uint32Array = chaCha20InitState(key, nonce, counter);
     assertEquals(initialState.length, 16);

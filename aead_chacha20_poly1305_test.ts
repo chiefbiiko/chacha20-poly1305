@@ -47,6 +47,7 @@ test(function aeadChaCha20Poly1305SealBasic(): void {
       ciphertext: Uint8Array;
       tag: Uint8Array;
     } = aeadChaCha20Poly1305Seal(key, nonce, plaintext, aad);
+    
     assertEquals(actual.ciphertext, ciphertext);
     assertEquals(actual.tag, tag);
   }

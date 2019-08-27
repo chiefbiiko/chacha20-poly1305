@@ -20,18 +20,24 @@ export function poly1305(
   if (otk.length !== KEY_BYTES) {
     throw new TypeError(`otk must have ${KEY_BYTES} bytes`);
   }
+  
   const tag: Uint8Array = new Uint8Array(TAG_BYTES);
+  
   const r: bigint = poly1305ClampLittleEndianBigInt(
     littleEndianBytesToBigInt(otk.subarray(0, 16))
   );
+  
   const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32));
+  
   const loopEnd: number = Math.ceil(msg.length / 16);
+  
   let acc: bigint = 0n;
-  let b: bigint;
+  
   for (let i: number = 1; i <= loopEnd; ++i) {
-    b = poly1305MsgBlockToBigInt(msg, i * 16);
-    acc = (r * (acc + b)) % PRIME1305;
+    acc = (r * (acc + poly1305MsgBlockToBigInt(msg, i * 16))) % PRIME1305;
   }
+  
   BigIntToSixteenLittleEndianBytes(acc + s, tag);
+  
   return tag;
 }

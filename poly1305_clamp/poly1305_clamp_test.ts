@@ -5,7 +5,9 @@ import { hex2bytes, littleEndianBytesToBigInt } from "./../util/util.ts";
 
 test(function poly1305ClampLittleEndianBytesBasic(): void {
   const r: Uint8Array = hex2bytes("deadbeefdeadbeefdeadbeefdeadbeef");
+  
   poly1305ClampLittleEndianBytes(r);
+  
   for (let i: number = 0; i < 16; ++i) {
     if (i === 3 || i === 7 || i === 11 || i === 15) {
       assert(r[i] < 16);
@@ -17,10 +19,15 @@ test(function poly1305ClampLittleEndianBytesBasic(): void {
 
 test(function poly1305ClampLittleEndianBigIntBasic(): void {
   let r: Uint8Array = hex2bytes("deadbeefdeadbeefdeadbeefdeadbeef");
+  
   poly1305ClampLittleEndianBytes(r);
+  
   const expected: bigint = littleEndianBytesToBigInt(r);
+  
   const rb: bigint = littleEndianBytesToBigInt(hex2bytes("deadbeefdeadbeefdeadbeefdeadbeef"));
+  
   const actual: bigint = poly1305ClampLittleEndianBigInt(rb);
+  
   assertEquals(actual, expected);
 });
 

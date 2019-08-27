@@ -20,19 +20,24 @@ export function aeadChaCha20Poly1305Seal(
   if (key.length !== KEY_BYTES) {
     throw new TypeError(`key must have ${KEY_BYTES} bytes`);
   }
+  
   if (nonce.length !== NONCE_BYTES) {
     throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
   }
+  
   if (plaintext.length > PLAINTEXT_BYTES_MAX) {
     throw new TypeError(`plaintext must not have more than ${PLAINTEXT_BYTES_MAX} bytes`);
   }
+  
   if (aad.length > AAD_BYTES_MAX) {
     throw new TypeError(`aad must not have more than ${AAD_BYTES_MAX} bytes`);
   }
+  
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const ciphertext: Uint8Array = chaCha20Cipher(key, nonce, 1, plaintext);
   const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
   const tag: Uint8Array = poly1305(otk, pac);
+  
   return { ciphertext, tag };
 }
 
@@ -46,23 +51,30 @@ export function aeadChaCha20Poly1305Open(
   if (key.length !== KEY_BYTES) {
     throw new TypeError(`key must have ${KEY_BYTES} bytes`);
   }
+  
   if (nonce.length !== NONCE_BYTES) {
     throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
   }
+  
   if (ciphertext.length > CIPHERTEXT_BYTES_MAX) {
     throw new TypeError(`plaintext must not have more than ${PLAINTEXT_BYTES_MAX} bytes`);
   }
+  
   if (aad.length > AAD_BYTES_MAX) {
     throw new TypeError(`aad must not have more than ${AAD_BYTES_MAX} bytes`);
   }
+  
   if (receivedTag.length !== TAG_BYTES) {
     throw new TypeError(`receivedTag must have ${TAG_BYTES} bytes`);
   }
+  
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
   const tag: Uint8Array = poly1305(otk, pac);
+  
   if (!constantTimeEqual(receivedTag, tag)) {
     return null;
   }
+  
   return chaCha20Cipher(key, nonce, 1, ciphertext);
 }

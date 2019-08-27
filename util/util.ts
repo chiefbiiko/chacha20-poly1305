@@ -57,13 +57,17 @@ export function numberToLittleEndianBytes(
 
 export function hex2bytes(hex: string): Uint8Array {
   const len: number = hex.length;
+  
   if (len % 2 || !/^[0-9a-fA-F]+$/.test(hex)) {
     throw new TypeError("Invalid hex string");
   }
+  
   const buf: Uint8Array = new Uint8Array(Math.floor(len / 2));
   const end: number = len / 2;
+  
   for (let i: number = 0; i < end; ++i) {
     buf[i] = parseInt(hex.substr(i * 2, 2), 16);
   }
+  
   return buf;
 }

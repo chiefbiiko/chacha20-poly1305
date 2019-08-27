@@ -26,8 +26,10 @@ const testVectors: TestVector[] = loadTestVectors();
 
 test(function poly1305MsgBlockToBigIntBasic(): void {
   let b: bigint;
+  
   for (const { msg, expected } of testVectors) {
     const loopEnd: number = Math.ceil(msg.length / 16);
+    
     for (let i: number = 1; i <= loopEnd; ++i) {
       b = poly1305MsgBlockToBigInt(msg, i * 16);
       assertEquals(b, expected.shift())
