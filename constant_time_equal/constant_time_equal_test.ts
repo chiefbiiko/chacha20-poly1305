@@ -48,9 +48,12 @@ test(function constantTimeEqualTiming(): void {
     } else {
       b.fill(99);
     }
-    start = Date.now();
+    
+    start = performance.now();
+    
     constantTimeEqual(a, b);
-    timings.push(Date.now() - start);
+    
+    timings.push(performance.now() - start);
   }
   
   const stdDev: number = standardDeviation(timings);
