@@ -30,19 +30,19 @@ function loadTestVectors(): TestVector[] {
   );
 }
 
-const testVectors: TestVector[] = loadTestVectors();
+loadTestVectors().forEach(
+  ({ msg, expected }: TestVector, i: number): void => {
+    test({
+      name: `poly1305MsgBlockToBigInt [${i}]`,
+      fn(): void {
+        const loopEnd: number = Math.ceil(msg.length / 16);
 
-test(function poly1305MsgBlockToBigIntBasic(): void {
-  let b: bigint;
-
-  for (const { msg, expected } of testVectors) {
-    const loopEnd: number = Math.ceil(msg.length / 16);
-
-    for (let i: number = 1; i <= loopEnd; ++i) {
-      b = poly1305MsgBlockToBigInt(msg, i * 16);
-      assertEquals(b, expected.shift());
-    }
+        for (let i: number = 1; i <= loopEnd; ++i) {
+          assertEquals(poly1305MsgBlockToBigInt(msg, i * 16), expected.shift());
+        }
+      }
+    });
   }
-});
+);
 
 runIfMain(import.meta);

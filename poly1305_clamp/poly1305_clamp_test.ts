@@ -21,20 +21,23 @@ test(function poly1305ClampLittleEndianBytesBasic(): void {
   }
 });
 
-test(function poly1305ClampLittleEndianBigIntBasic(): void {
-  let r: Uint8Array = encode("deadbeefdeadbeefdeadbeefdeadbeef", "hex");
+test({
+  name: "poly1305ClampLittleEndianBigInt",
+  fn(): void {
+    let r: Uint8Array = encode("deadbeefdeadbeefdeadbeefdeadbeef", "hex");
 
-  poly1305ClampLittleEndianBytes(r);
+    poly1305ClampLittleEndianBytes(r);
 
-  const expected: bigint = littleEndianBytesToBigInt(r);
+    const expected: bigint = littleEndianBytesToBigInt(r);
 
-  const rb: bigint = littleEndianBytesToBigInt(
-    encode("deadbeefdeadbeefdeadbeefdeadbeef", "hex")
-  );
+    const rb: bigint = littleEndianBytesToBigInt(
+      encode("deadbeefdeadbeefdeadbeefdeadbeef", "hex")
+    );
 
-  const actual: bigint = poly1305ClampLittleEndianBigInt(rb);
+    const actual: bigint = poly1305ClampLittleEndianBigInt(rb);
 
-  assertEquals(actual, expected);
+    assertEquals(actual, expected);
+  }
 });
 
 runIfMain(import.meta, { parallel: true });

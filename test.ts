@@ -1,6 +1,6 @@
 import { runIfMain } from "https://deno.land/std/testing/mod.ts";
 
-import "./zero_pad16/zero_pad16_test.ts";
+import "./right_zero_pad16/right_zero_pad16_test.ts";
 import "./poly1305_clamp/poly1305_clamp_test.ts";
 import "./constant_time_equal/constant_time_equal_test.ts";
 import "./chacha20_init_state/chacha20_init_state_test.ts";

@@ -39,95 +39,145 @@ function loadTestVectors(): TestVector[] {
 
 const testVectors: TestVector[] = loadTestVectors();
 
-test(function aeadChaCha20Poly1305SealBasic(): void {
-  for (const { key, nonce, plaintext, aad, ciphertext, tag } of testVectors) {
-    const actual: {
-      ciphertext: Uint8Array;
-      tag: Uint8Array;
-    } = aeadChaCha20Poly1305Seal(key, nonce, plaintext, aad);
+testVectors.forEach(
+  (
+    { key, nonce, plaintext, aad, ciphertext, tag }: TestVector,
+    i: number
+  ): void => {
+    test({
+      name: `aeadChaCha20Poly1305Seal [${i}]`,
+      fn(): void {
+        const actual: {
+          ciphertext: Uint8Array;
+          tag: Uint8Array;
+        } = aeadChaCha20Poly1305Seal(key, nonce, plaintext, aad);
 
-    assertEquals(actual.ciphertext, ciphertext);
-    assertEquals(actual.tag, tag);
+        assertEquals(actual.ciphertext, ciphertext);
+        assertEquals(actual.tag, tag);
+      }
+    });
   }
-});
+);
 
-test(function aeadChaCha20Poly1305OpenBasic(): void {
-  for (const { key, nonce, plaintext, aad, ciphertext, tag } of testVectors) {
-    assertEquals(
-      aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, tag),
-      plaintext
-    );
+testVectors.forEach(
+  (
+    { key, nonce, plaintext, aad, ciphertext, tag }: TestVector,
+    i: number
+  ): void => {
+    test({
+      name: `aeadChaCha20Poly1305Open [${i}]`,
+      fn(): void {
+        assertEquals(
+          aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, tag),
+          plaintext
+        );
+      }
+    });
   }
-});
+);
 
-test(function aeadChaCha20Poly1305OpenNullsIfNotAuthenticated(): void {
-  const receivedTag: Uint8Array = new Uint8Array(16);
-  for (const { key, nonce, aad, ciphertext } of testVectors) {
-    assertEquals(
-      aeadChaCha20Poly1305Open(key, nonce, ciphertext, aad, receivedTag),
-      null
-    );
+testVectors.forEach(
+  ({ key, nonce, aad, ciphertext }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305 nulls if not authenticated [${i}]`,
+      fn(): void {
+        assertEquals(
+          aeadChaCha20Poly1305Open(
+            key,
+            nonce,
+            ciphertext,
+            aad,
+            new Uint8Array(16)
+          ),
+          null
+        );
+      }
+    });
   }
-});
+);
 
-test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectKeyBytes(): void {
-  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
-  assertThrows(
-    aeadChaCha20Poly1305Open.bind(
-      null,
-      key.subarray(-9),
-      nonce,
-      ciphertext,
-      aad,
-      tag
-    ),
-    TypeError
-  );
-});
+testVectors.forEach(
+  ({ key, nonce, ciphertext, aad, tag }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Open throws if the key length is invalid [${i}]`,
+      fn(): void {
+        assertThrows(
+          aeadChaCha20Poly1305Open.bind(
+            null,
+            key.subarray(-9),
+            nonce,
+            ciphertext,
+            aad,
+            tag
+          ),
+          TypeError
+        );
+      }
+    });
+  }
+);
 
-test(function aeadChaCha20Poly1305OpenThrowsIfIncorrectNonceBytes(): void {
-  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
-  assertThrows(
-    aeadChaCha20Poly1305Open.bind(
-      null,
-      key,
-      nonce.subarray(-9),
-      ciphertext,
-      aad,
-      tag
-    ),
-    TypeError
-  );
-});
+testVectors.forEach(
+  ({ key, nonce, ciphertext, aad, tag }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Open throws if the nonce length is invalid [${i}]`,
+      fn(): void {
+        assertThrows(
+          aeadChaCha20Poly1305Open.bind(
+            null,
+            key,
+            nonce.subarray(-9),
+            ciphertext,
+            aad,
+            tag
+          ),
+          TypeError
+        );
+      }
+    });
+  }
+);
 
-test(function aeadChaCha20Poly1305SealThrowsIfIncorrectKeyBytes(): void {
-  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
-  assertThrows(
-    aeadChaCha20Poly1305Seal.bind(
-      null,
-      key.subarray(-9),
-      nonce,
-      ciphertext,
-      aad,
-      tag
-    ),
-    TypeError
-  );
-});
+testVectors.forEach(
+  ({ key, nonce, plaintext, aad, tag }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Seal throws if the key length is invalid [${i}]`,
+      fn(): void {
+        assertThrows(
+          aeadChaCha20Poly1305Seal.bind(
+            null,
+            key.subarray(-9),
+            nonce,
+            plaintext,
+            aad,
+            tag
+          ),
+          TypeError
+        );
+      }
+    });
+  }
+);
 
-test(function aeadChaCha20Poly1305SealThrowsIfIncorrectNonceBytes(): void {
-  const { key, nonce, ciphertext, aad, tag } = testVectors[0];
-  assertThrows(
-    aeadChaCha20Poly1305Seal.bind(
-      null,
-      key,
-      nonce.subarray(-9),
-      ciphertext,
-      aad,
-      tag
-    ),
-    TypeError
-  );
-});
+testVectors.forEach(
+  ({ key, nonce, plaintext, aad, tag }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Seal throws if the nonce length is invalid [${i}]`,
+      fn(): void {
+        assertThrows(
+          aeadChaCha20Poly1305Seal.bind(
+            null,
+            key,
+            nonce.subarray(-9),
+            plaintext,
+            aad,
+            tag
+          ),
+          TypeError
+        );
+      }
+    });
+  }
+);
 
 runIfMain(import.meta, { parallel: true });

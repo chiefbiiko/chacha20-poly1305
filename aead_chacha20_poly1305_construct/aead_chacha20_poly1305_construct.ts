@@ -1,12 +1,12 @@
-import { zeroPad16 } from "./../zero_pad16/zero_pad16.ts";
+import { rightZeroPad16 } from "./../right_zero_pad16/right_zero_pad16.ts";
 import { numberToLittleEndianBytes } from "./../util/util.ts";
 
 export function aeadChaCha20Poly1305Construct(
   ciphertext: Uint8Array,
   aad: Uint8Array
 ): Uint8Array {
-  const paddedCiphertext: Uint8Array = zeroPad16(ciphertext);
-  const paddedAad: Uint8Array = zeroPad16(aad);
+  const paddedCiphertext: Uint8Array = rightZeroPad16(ciphertext);
+  const paddedAad: Uint8Array = rightZeroPad16(aad);
   const paddedTotalLength: number = paddedCiphertext.length + paddedAad.length;
   const pac: Uint8Array = new Uint8Array(paddedTotalLength + 16);
 

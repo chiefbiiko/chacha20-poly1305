@@ -32,12 +32,15 @@ function loadTestVectors(): TestVector[] {
   );
 }
 
-const testVectors: TestVector[] = loadTestVectors();
-
-test(function poly1305KeyGenBasic(): void {
-  for (const { key, nonce, otk } of testVectors) {
-    assertEquals(poly1305KeyGen(key, nonce), otk);
+loadTestVectors().forEach(
+  ({ key, nonce, otk }: TestVector, i: number): void => {
+    test({
+      name: `poly1305KeyGen [${i}]`,
+      fn(): void {
+        assertEquals(poly1305KeyGen(key, nonce), otk);
+      }
+    });
   }
-});
+);
 
 runIfMain(import.meta);
