@@ -37,6 +37,10 @@ const vue: Uint8Array = new Uint8Array(wasm.memory.buffer);
       ciphertext.set(wasm.memory.subarray(ciphertextPtr,ciphertextPtr +  plaintext.byteLength))
    tag.set(wasm.memory.subarray(tagPtr,tagPtr + 16))
    
+      wasm.__wbindgen_free(keyPtr, key.byteLength)
+      wasm.__wbindgen_free(noncePtr, nonce.byteLength)
+      wasm.__wbindgen_free(plaintext, plaintext.byteLength)
+      wasm.__wbindgen_free(aadPtr, aad.byteLength)
    wasm.__wbindgen_free(ciphertextPtr, plaintext.byteLength)
    wasm.__wbindgen_free(tagPtr, 16)
    
