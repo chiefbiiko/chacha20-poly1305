@@ -3,3 +3,4 @@ target
 Cargo.lock
 package.json
 *.js
+tmp.txt

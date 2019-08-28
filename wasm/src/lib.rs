@@ -8,8 +8,11 @@ pub fn seal(
     aad: Vec<u8>,
     plaintext: Vec<u8>,
     mut ciphertext: Vec<u8>,
-) -> Result<Vec<u8>, JsValue> {
-    Ok(encrypt(&key, &nonce, &aad, &plaintext, &mut ciphertext).unwrap().to_vec())
+    mut tag: Vec<u8>,
+) -> Result<(), JsValue> {
+    tag = encrypt(&key, &nonce, &aad, &plaintext, &mut ciphertext).unwrap().to_vec();
+    
+    Ok(())
 }
 
 #[wasm_bindgen]
