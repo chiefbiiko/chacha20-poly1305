@@ -1,8 +1,7 @@
 use chacha20_poly1305_aead::{/*decrypt, */encrypt};
-use wasm_bindgen::{JsValue, prelude::*};
-use js_sys::Uint8Array;
+use wasm_bindgen::prelude::*;
+// use js_sys::Uint8Array;
 
-// TRY: pass key, nonce.aad,plaintext as &[u8] -> no need to do the copy_to
 #[wasm_bindgen]
 pub fn seal(
     key: &[u8],
@@ -11,13 +10,11 @@ pub fn seal(
     plaintext: &[u8],
     mut ciphertext: &mut [u8],
     mut tag: &mut [u8],
-) -> Result<JsValue, JsValue> {
+) -> () {
     let _tag = encrypt(key, nonce, aad, plaintext, &mut ciphertext).unwrap();
 
     // tag.set(&Uint8Array::from(&_tag[..]), 0);
-
-    // TODO: wrap ciphertext and tag in an object
-    Ok(JsValue::NULL)
+    tag.copy_from_slice(&_tag);
 }
 
 // #[wasm_bindgen]
