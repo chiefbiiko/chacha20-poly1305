@@ -1,11 +1,11 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 import {
-  assertEquals,
-/**  assertThrows*/
+  assertEquals
+  /**  assertThrows*/
 } from "https://deno.land/std/testing/asserts.ts";
 import {
-  seal,
+  seal
   /*open*/
 } from "./mod.ts";
 

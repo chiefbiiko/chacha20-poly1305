@@ -8,13 +8,10 @@ pub fn seal(
     nonce: &[u8],
     aad: &[u8],
     plaintext: &[u8],
-    mut ciphertext: &mut [u8],
-    mut tag: &mut [u8],
+    mut ciphertext: Vec<u8>,
+    mut tag:  Vec<u8>,
 ) -> () {
-    let _tag = encrypt(key, nonce, aad, plaintext, &mut ciphertext).unwrap();
-
-    // tag.set(&Uint8Array::from(&_tag[..]), 0);
-    tag.copy_from_slice(&_tag);
+    tag.copy_from_slice(&encrypt(key, nonce, aad, plaintext, &mut ciphertext).unwrap());
 }
 
 // #[wasm_bindgen]
