@@ -18,18 +18,20 @@ export function seal(
   const ciphertextPtr: number = wasm.__wbindgen_malloc(plaintext.byteLength);
   const tagPtr: number = wasm.__wbindgen_malloc(16);
 
-  const vue: Uint8Array = new Uint8Array(wasm.memory.buffer);
+  const mem: Uint8Array = new Uint8Array(wasm.memory.buffer);
 
-  vue.set(key, keyPtr);
-  vue.set(nonce, noncePtr);
-  vue.set(plaintext, plaintextPtr);
-  vue.set(aad, aadPtr);
+  mem.set(key, keyPtr);
+  mem.set(nonce, noncePtr);
+  mem.set(plaintext, plaintextPtr);
+  mem.set(aad, aadPtr);
 
   wasm.seal(
     keyPtr,
     key.byteLength,
     noncePtr,
     nonce.byteLength,
+    aadPtr,
+    aad.byteLength,
     plaintextPtr,
     plaintext.byteLength,
     ciphertextPtr,
@@ -42,16 +44,9 @@ export function seal(
   const tag: Uint8Array = new Uint8Array(16);
 
   ciphertext.set(
-    wasm.memory.subarray(ciphertextPtr, ciphertextPtr + plaintext.byteLength)
+    mem.subarray(ciphertextPtr, ciphertextPtr + plaintext.byteLength)
   );
-  tag.set(wasm.memory.subarray(tagPtr, tagPtr + 16));
-
-  //    wasm.__wbindgen_free(keyPtr, key.byteLength)
-  //    wasm.__wbindgen_free(noncePtr, nonce.byteLength)
-  //    wasm.__wbindgen_free(plaintext, plaintext.byteLength)
-  //    wasm.__wbindgen_free(aadPtr, aad.byteLength)
-  // wasm.__wbindgen_free(ciphertextPtr, plaintext.byteLength)
-  // wasm.__wbindgen_free(tagPtr, 16)
+  tag.set(mem.subarray(tagPtr, tagPtr + 16));
 
   return { ciphertext, tag };
 }
