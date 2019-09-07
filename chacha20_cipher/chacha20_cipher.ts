@@ -9,7 +9,8 @@ export function chaCha20Cipher(
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,
-  text: Uint8Array
+  text: Uint8Array,
+  out: Uint8Array = new Uint8Array(text.byteLength)
 ): Uint8Array {
   if (key.length !== KEY_BYTES) {
     throw new TypeError(`key must have ${KEY_BYTES} bytes`);
@@ -23,12 +24,13 @@ export function chaCha20Cipher(
     throw new TypeError("counter must be an unsigned integer");
   }
 
-  const out: Uint8Array = new Uint8Array(text.length);
-  const loopEnd: number = Math.floor(text.length / 64);
+  const loopEnd: number = Math.floor(text.byteLength / 64);
   const rmd: number = text.length % 64;
+
   const keyChunk: Uint8Array = new Uint8Array(64);
   const state: Uint32Array = new Uint32Array(16);
   const initialState: Uint32Array = chaCha20InitState(key, nonce, counter);
+
   let textOffset: number = 0;
   let outOffset: number = 0;
   let i: number;
@@ -54,6 +56,10 @@ export function chaCha20Cipher(
       outOffset
     );
   }
+
+  keyChunk.fill(0x00, 0, keyChunk.byteLength);
+  state.fill(0, 0, state.length);
+  initialState.fill(0, 0, initialState.length);
 
   return out;
 }

@@ -5,5 +5,7 @@ export function poly1305KeyGen(key: Uint8Array, nonce: Uint8Array): Uint8Array {
 
   chaCha20Block(key, nonce, 0, out);
 
+  out.fill(0x00, 32, out.byteLength);
+
   return out.subarray(0, 32);
 }

@@ -5,7 +5,7 @@ export function chaCha20InitState(
   nonce: Uint8Array,
   counter: number
 ): Uint32Array {
-  const state = new Uint32Array(16);
+  const state: Uint32Array = new Uint32Array(16);
 
   state[0] = 0x61707865;
   state[1] = 0x3320646e;

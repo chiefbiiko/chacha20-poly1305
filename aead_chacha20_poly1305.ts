@@ -40,6 +40,8 @@ export function aeadChaCha20Poly1305Seal(
   const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
   const tag: Uint8Array = poly1305(otk, pac);
 
+  otk.fill(0x00, 0, otk.byteLength);
+
   return { ciphertext, tag };
 }
 
@@ -75,6 +77,8 @@ export function aeadChaCha20Poly1305Open(
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
   const tag: Uint8Array = poly1305(otk, pac);
+
+  otk.fill(0x00, 0, otk.byteLength);
 
   if (!constantTimeEqual(receivedTag, tag)) {
     return null;
