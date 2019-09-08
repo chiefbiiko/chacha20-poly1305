@@ -10,7 +10,9 @@ test({
 
     assert(y.byteLength % 16 === 0);
     assertEquals(y.subarray(0, x.byteLength), x);
-    assert(y.subarray(x.byteLength, y.byteLength).every((b: number) => b === 0x00));
+    assert(
+      y.subarray(x.byteLength, y.byteLength).every((b: number) => b === 0x00)
+    );
   }
 });
 
