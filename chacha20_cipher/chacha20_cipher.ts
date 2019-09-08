@@ -12,11 +12,11 @@ export function chaCha20Cipher(
   text: Uint8Array,
   out: Uint8Array = new Uint8Array(text.byteLength)
 ): Uint8Array {
-  if (key.length !== KEY_BYTES) {
+  if (key.byteLength !== KEY_BYTES) {
     throw new TypeError(`key must have ${KEY_BYTES} bytes`);
   }
 
-  if (nonce.length !== NONCE_BYTES) {
+  if (nonce.byteLength !== NONCE_BYTES) {
     throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
   }
 
@@ -25,7 +25,7 @@ export function chaCha20Cipher(
   }
 
   const loopEnd: number = Math.floor(text.byteLength / 64);
-  const rmd: number = text.length % 64;
+  const rmd: number = text.byteLength % 64;
 
   const keyChunk: Uint8Array = new Uint8Array(64);
   const state: Uint32Array = new Uint32Array(16);
@@ -49,7 +49,7 @@ export function chaCha20Cipher(
   if (rmd) {
     chaCha20Block(null, null, counter + loopEnd, keyChunk, state, initialState);
     xor(
-      text.subarray(loopEnd * 64, text.length),
+      text.subarray(loopEnd * 64, text.byteLength),
       keyChunk,
       rmd,
       out,
@@ -58,8 +58,8 @@ export function chaCha20Cipher(
   }
 
   keyChunk.fill(0x00, 0, keyChunk.byteLength);
-  state.fill(0, 0, state.length);
-  initialState.fill(0, 0, initialState.length);
+  state.fill(0, 0, state.byteLength);
+  initialState.fill(0, 0, initialState.byteLength);
 
   return out;
 }

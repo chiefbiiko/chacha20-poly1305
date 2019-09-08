@@ -4,7 +4,7 @@ export function poly1305MsgBlockToBigInt(
 ): bigint {
   let loopEnd: number = 17;
   let j: number = blockEnd - 1;
-  const exc: number = blockEnd - msg.length;
+  const exc: number = blockEnd - msg.byteLength;
 
   if (exc > 0) {
     loopEnd -= exc;

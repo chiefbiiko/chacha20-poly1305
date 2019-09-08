@@ -8,9 +8,9 @@ test({
     const x: Uint8Array = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const y: Uint8Array = rightZeroPad16(x);
 
-    assert(y.length % 16 === 0);
-    assertEquals(y.subarray(0, x.length), x);
-    assert(y.subarray(x.length, y.length).every((b: number) => b === 0x00));
+    assert(y.byteLength % 16 === 0);
+    assertEquals(y.subarray(0, x.byteLength), x);
+    assert(y.subarray(x.byteLength, y.byteLength).every((b: number) => b === 0x00));
   }
 });
 

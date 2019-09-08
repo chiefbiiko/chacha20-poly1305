@@ -17,21 +17,21 @@ export function aeadChaCha20Poly1305Seal(
   plaintext: Uint8Array,
   aad: Uint8Array
 ): { ciphertext: Uint8Array; tag: Uint8Array } {
-  if (key.length !== KEY_BYTES) {
+  if (key.byteLength !== KEY_BYTES) {
     throw new TypeError(`key must have ${KEY_BYTES} bytes`);
   }
 
-  if (nonce.length !== NONCE_BYTES) {
+  if (nonce.byteLength !== NONCE_BYTES) {
     throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
   }
 
-  if (plaintext.length > PLAINTEXT_BYTES_MAX) {
+  if (plaintext.byteLength > PLAINTEXT_BYTES_MAX) {
     throw new TypeError(
       `plaintext must not have more than ${PLAINTEXT_BYTES_MAX} bytes`
     );
   }
 
-  if (aad.length > AAD_BYTES_MAX) {
+  if (aad.byteLength > AAD_BYTES_MAX) {
     throw new TypeError(`aad must not have more than ${AAD_BYTES_MAX} bytes`);
   }
 
@@ -52,25 +52,25 @@ export function aeadChaCha20Poly1305Open(
   aad: Uint8Array,
   receivedTag: Uint8Array
 ): Uint8Array {
-  if (key.length !== KEY_BYTES) {
+  if (key.byteLength !== KEY_BYTES) {
     throw new TypeError(`key must have ${KEY_BYTES} bytes`);
   }
 
-  if (nonce.length !== NONCE_BYTES) {
+  if (nonce.byteLength !== NONCE_BYTES) {
     throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
   }
 
-  if (ciphertext.length > CIPHERTEXT_BYTES_MAX) {
+  if (ciphertext.byteLength > CIPHERTEXT_BYTES_MAX) {
     throw new TypeError(
       `plaintext must not have more than ${PLAINTEXT_BYTES_MAX} bytes`
     );
   }
 
-  if (aad.length > AAD_BYTES_MAX) {
+  if (aad.byteLength > AAD_BYTES_MAX) {
     throw new TypeError(`aad must not have more than ${AAD_BYTES_MAX} bytes`);
   }
 
-  if (receivedTag.length !== TAG_BYTES) {
+  if (receivedTag.byteLength !== TAG_BYTES) {
     throw new TypeError(`receivedTag must have ${TAG_BYTES} bytes`);
   }
 

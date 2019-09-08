@@ -35,7 +35,7 @@ loadTestVectors().forEach(
     test({
       name: `poly1305MsgBlockToBigInt [${i}]`,
       fn(): void {
-        const loopEnd: number = Math.ceil(msg.length / 16);
+        const loopEnd: number = Math.ceil(msg.byteLength / 16);
 
         for (let i: number = 1; i <= loopEnd; ++i) {
           assertEquals(poly1305MsgBlockToBigInt(msg, i * 16), expected.shift());

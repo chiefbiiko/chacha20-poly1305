@@ -10,7 +10,7 @@ export const KEY_BYTES: number = 32;
 export const TAG_BYTES: number = 16;
 
 export function poly1305(otk: Uint8Array, msg: Uint8Array): Uint8Array {
-  if (otk.length !== KEY_BYTES) {
+  if (otk.byteLength !== KEY_BYTES) {
     throw new TypeError(`otk must have ${KEY_BYTES} bytes`);
   }
 
@@ -22,7 +22,7 @@ export function poly1305(otk: Uint8Array, msg: Uint8Array): Uint8Array {
 
   const s: bigint = littleEndianBytesToBigInt(otk.subarray(16, 32));
 
-  const loopEnd: number = Math.ceil(msg.length / 16);
+  const loopEnd: number = Math.ceil(msg.byteLength / 16);
 
   let acc: bigint = 0n;
 

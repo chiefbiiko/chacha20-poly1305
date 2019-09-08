@@ -1,5 +1,5 @@
 export function poly1305ClampLittleEndianBytes(r: Uint8Array): void {
-  if (r.length !== 16) {
+  if (r.byteLength !== 16) {
     throw new TypeError("r must have 16 bytes");
   }
   

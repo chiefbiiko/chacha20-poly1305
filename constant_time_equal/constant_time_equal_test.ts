@@ -37,41 +37,12 @@ test({
 });
 
 test({
-  name: "constantTimeEqual iterates over max(a.length, b.length)",
+  name: "constantTimeEqual iterates over max(a.byteLength, b.byteLength)",
   fn(): void {
     const a: Uint8Array = new Uint8Array([1, 2, 0]);
     const b: Uint8Array = new Uint8Array([1, 2]);
 
     assert(!constantTimeEqual(a, b));
-  }
-});
-
-test({
-  name: "constantTimeEqual - somewhat equal timings",
-  fn(): void {
-    const n: number = 1000;
-    const timings: number[] = Array(n);
-    const a: Uint8Array = new Uint8Array(16);
-    const b: Uint8Array = new Uint8Array(16).fill(99);
-    let start: number;
-
-    for (let i: number = n; i; --i) {
-      if (i % 2) {
-        b.fill(0);
-      } else {
-        b.fill(99);
-      }
-
-      start = performance.now();
-
-      constantTimeEqual(a, b);
-
-      timings.push(performance.now() - start);
-    }
-
-    const stdDev: number = standardDeviation(timings);
-
-    assert(stdDev < 0.3); // lt 300 microseconds
   }
 });
 
