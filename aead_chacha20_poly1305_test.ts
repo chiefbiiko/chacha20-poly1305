@@ -1,8 +1,5 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import {
-  assertEquals,
-  assertThrows
-} from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import {
   aeadChaCha20Poly1305Seal,
   aeadChaCha20Poly1305Open
@@ -97,20 +94,47 @@ testVectors.forEach(
 );
 
 testVectors.forEach(
+  ({ key, nonce, plaintext, aad }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Seal nulls if the key length is invalid [${i}]`,
+      fn(): void {
+        assertEquals(
+          aeadChaCha20Poly1305Seal(key.subarray(-9), nonce, plaintext, aad),
+          null
+        );
+      }
+    });
+  }
+);
+
+testVectors.forEach(
+  ({ key, nonce, plaintext, aad }: TestVector, i: number): void => {
+    test({
+      name: `aeadChaCha20Poly1305Seal nulls if the nonce length is invalid [${i}]`,
+      fn(): void {
+        assertEquals(
+          aeadChaCha20Poly1305Seal(key, nonce.subarray(-9), plaintext, aad),
+          null
+        );
+      }
+    });
+  }
+);
+
+testVectors.forEach(
   ({ key, nonce, ciphertext, aad, tag }: TestVector, i: number): void => {
     test({
       name: `aeadChaCha20Poly1305Open throws if the key length is invalid [${i}]`,
       fn(): void {
-        assertThrows(
-          aeadChaCha20Poly1305Open.bind(
-            null,
+        assertEquals(
+          aeadChaCha20Poly1305Open(
             key.subarray(-9),
             nonce,
             ciphertext,
             aad,
             tag
           ),
-          TypeError
+          null
         );
       }
     });
@@ -120,60 +144,17 @@ testVectors.forEach(
 testVectors.forEach(
   ({ key, nonce, ciphertext, aad, tag }: TestVector, i: number): void => {
     test({
-      name: `aeadChaCha20Poly1305Open throws if the nonce length is invalid [${i}]`,
+      name: `aeadChaCha20Poly1305Open nulls if the nonce length is invalid [${i}]`,
       fn(): void {
-        assertThrows(
-          aeadChaCha20Poly1305Open.bind(
-            null,
+        assertEquals(
+          aeadChaCha20Poly1305Open(
             key,
             nonce.subarray(-9),
             ciphertext,
             aad,
             tag
           ),
-          TypeError
-        );
-      }
-    });
-  }
-);
-
-testVectors.forEach(
-  ({ key, nonce, plaintext, aad, tag }: TestVector, i: number): void => {
-    test({
-      name: `aeadChaCha20Poly1305Seal throws if the key length is invalid [${i}]`,
-      fn(): void {
-        assertThrows(
-          aeadChaCha20Poly1305Seal.bind(
-            null,
-            key.subarray(-9),
-            nonce,
-            plaintext,
-            aad,
-            tag
-          ),
-          TypeError
-        );
-      }
-    });
-  }
-);
-
-testVectors.forEach(
-  ({ key, nonce, plaintext, aad, tag }: TestVector, i: number): void => {
-    test({
-      name: `aeadChaCha20Poly1305Seal throws if the nonce length is invalid [${i}]`,
-      fn(): void {
-        assertThrows(
-          aeadChaCha20Poly1305Seal.bind(
-            null,
-            key,
-            nonce.subarray(-9),
-            plaintext,
-            aad,
-            tag
-          ),
-          TypeError
+          null
         );
       }
     });
