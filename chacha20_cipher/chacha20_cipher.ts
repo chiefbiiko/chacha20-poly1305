@@ -3,7 +3,7 @@ import { chaCha20InitState } from "./../chacha20_init_state/chacha20_init_state.
 import { xor } from "./../util/util.ts";
 
 export const KEY_BYTES: number = 32;
-export const MIN_NONCE_BYTES: number = 12;
+export const NONCE_BYTES: number = 12;
 
 export function chaCha20Cipher(
   out: Uint8Array,
@@ -17,7 +17,7 @@ export function chaCha20Cipher(
     return null;
   }
 
-  if (nonce.byteLength < MIN_NONCE_BYTES) {
+  if (nonce.byteLength !== NONCE_BYTES) {
     // throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
     return null;
   }
