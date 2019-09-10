@@ -3,25 +3,28 @@ import { chaCha20InitState } from "./../chacha20_init_state/chacha20_init_state.
 import { xor } from "./../util/util.ts";
 
 export const KEY_BYTES: number = 32;
-export const NONCE_BYTES: number = 12;
+export const MIN_NONCE_BYTES: number = 12;
 
 export function chaCha20Cipher(
+  out: Uint8Array,
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,
-  text: Uint8Array,
-  out: Uint8Array = new Uint8Array(text.byteLength)
-): Uint8Array {
+  text: Uint8Array
+): void {
   if (key.byteLength !== KEY_BYTES) {
-    throw new TypeError(`key must have ${KEY_BYTES} bytes`);
+    // throw new TypeError(`key must have ${KEY_BYTES} bytes`);
+    return null;
   }
 
-  if (nonce.byteLength !== NONCE_BYTES) {
-    throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
+  if (nonce.byteLength < MIN_NONCE_BYTES) {
+    // throw new TypeError(`nonce must have ${NONCE_BYTES} bytes`);
+    return null;
   }
 
   if (counter < 0 || counter % 1) {
-    throw new TypeError("counter must be an unsigned integer");
+    // throw new TypeError("counter must be an unsigned integer");
+    return null;
   }
 
   const loopEnd: number = Math.floor(text.byteLength / 64);
@@ -36,7 +39,7 @@ export function chaCha20Cipher(
   let i: number;
 
   for (i = 0; i < loopEnd; ++i, textOffset = i * 64, outOffset += 64) {
-    chaCha20Block(null, null, counter + i, keyChunk, state, initialState);
+    chaCha20Block(keyChunk, null, null, counter + i, state, initialState);
     xor(
       text.subarray(textOffset, textOffset + 64),
       keyChunk,
@@ -47,7 +50,7 @@ export function chaCha20Cipher(
   }
 
   if (rmd) {
-    chaCha20Block(null, null, counter + loopEnd, keyChunk, state, initialState);
+    chaCha20Block(keyChunk, null, null, counter + loopEnd, state, initialState);
     xor(
       text.subarray(loopEnd * 64, text.byteLength),
       keyChunk,
@@ -60,6 +63,4 @@ export function chaCha20Cipher(
   keyChunk.fill(0x00, 0, keyChunk.byteLength);
   state.fill(0, 0, state.byteLength);
   initialState.fill(0, 0, initialState.byteLength);
-
-  return out;
 }

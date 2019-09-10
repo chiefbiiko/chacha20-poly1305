@@ -43,7 +43,7 @@ testVectors.forEach(
       fn(): void {
         const actual: Uint8Array = new Uint8Array(64);
 
-        chaCha20Block(key, nonce, counter, actual);
+        chaCha20Block(actual, key, nonce, counter);
 
         assertEquals(actual, expected);
       }
@@ -60,7 +60,7 @@ testVectors.forEach(
         const state: Uint32Array = new Uint32Array(16);
         let initialState: Uint32Array;
 
-        chaCha20Block(key, nonce, counter, actual, state, initialState);
+        chaCha20Block(actual, key, nonce, counter, state, initialState);
 
         assertEquals(actual, expected);
       }

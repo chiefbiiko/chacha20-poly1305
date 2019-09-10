@@ -3,10 +3,10 @@ import { chaCha20QuarterRound } from "./../chacha20_quarter_round/chacha20_quart
 import { numberToLittleEndianBytes } from "./../util/util.ts";
 
 export function chaCha20Block(
+  out: Uint8Array,
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number,
-  out: Uint8Array,
   state?: Uint32Array,
   initialState?: Uint32Array
 ): void {

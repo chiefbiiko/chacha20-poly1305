@@ -40,16 +40,17 @@ const testVectors: TestVector[] = loadTestVectors();
 
 testVectors.forEach(
   (
-    { key, nonce, counter, plaintext, ciphertext }: TestVector,
+    { key, nonce, counter, plaintext, ciphertext: expected }: TestVector,
     i: number
   ): void => {
     test({
       name: `chaCha20 encryption [${i}]`,
       fn(): void {
-        assertEquals(
-          chaCha20Cipher(key, nonce, counter, plaintext),
-          ciphertext
-        );
+        const ciphertext: Uint8Array = new Uint8Array(plaintext.byteLength);
+
+        chaCha20Cipher(ciphertext, key, nonce, counter, plaintext)
+
+        assertEquals(ciphertext, expected);
       }
     });
   }
@@ -57,16 +58,17 @@ testVectors.forEach(
 
 testVectors.forEach(
   (
-    { key, nonce, counter, plaintext, ciphertext }: TestVector,
+    { key, nonce, counter, plaintext: expected, ciphertext }: TestVector,
     i: number
   ): void => {
     test({
       name: `chaCha20 decryption [${i}]`,
       fn(): void {
-        assertEquals(
-          chaCha20Cipher(key, nonce, counter, ciphertext),
-          plaintext
-        );
+        const plaintext: Uint8Array = new Uint8Array(ciphertext.byteLength);
+
+        chaCha20Cipher(plaintext, key, nonce, counter, ciphertext)
+
+        assertEquals(plaintext, expected);
       }
     });
   }
