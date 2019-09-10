@@ -12,7 +12,7 @@ export const NONCE_BYTES: number = 16;
 export const CONSTANT_BYTES: number = 16;
 
 /** HChaCha20 output bytes. */
-export const HASH_BYTES: number = 32;
+export const OUTPUT_BYTES: number = 32;
 
 /** HChaCha20 primitive. */
 export function hChaCha20(

@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
-import { hChaCha20, HASH_BYTES } from "./hchacha20.ts";
+import { hChaCha20, OUTPUT_BYTES } from "./hchacha20.ts";
 
 const {
   readFileSync,
@@ -43,7 +43,7 @@ testVectors.forEach(
     test({
       name: `hChaCha20 [${i}]`,
       fn(): void {
-        const actual: Uint8Array = new Uint8Array(HASH_BYTES);
+        const actual: Uint8Array = new Uint8Array(OUTPUT_BYTES);
 
         hChaCha20(actual, key, nonce, constant);
 
