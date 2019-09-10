@@ -11,7 +11,8 @@ export const TAG_BYTES: number = 16;
 
 export function poly1305(otk: Uint8Array, msg: Uint8Array): Uint8Array {
   if (otk.byteLength !== KEY_BYTES) {
-    throw new TypeError(`otk must have ${KEY_BYTES} bytes`);
+    // throw new TypeError(`otk must have ${KEY_BYTES} bytes`);
+    return null;
   }
 
   const tag: Uint8Array = new Uint8Array(TAG_BYTES);
