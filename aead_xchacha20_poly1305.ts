@@ -35,6 +35,8 @@ export function aeadXchaCha20Poly1305Seal(
     return null;
   }
 
+  throw Error("unimplemented");
+
   const subKey: Uint8Array = new Uint8Array(32);
 
   hChaCha20(subKey, key, nonce.subarray(0, 16));
