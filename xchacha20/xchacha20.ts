@@ -1,12 +1,12 @@
-import { chaCha20Block } from "./../chacha20_block/chacha20_block.ts";
-import { chaCha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
-import { hChaCha20, NONCE_BYTES as HCHACHA20_NONCE_BYTES, OUTPUT_BYTES as HCHACHA20_OUTPUT_BYTES } from "./../hchacha20/hchacha20.ts";
+import { chacha20Block } from "./../chacha20_block/chacha20_block.ts";
+import { chacha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
+import { hchacha20, NONCE_BYTES as Hchacha20_NONCE_BYTES, OUTPUT_BYTES as Hchacha20_OUTPUT_BYTES } from "./../hchacha20/hchacha20.ts";
 import { xor } from "./../util/util.ts";
 
 export const KEY_BYTES: number = 32;
 export const NONCE_BYTES: number = 24;
 
-const CHACHA20_NONCE_BYTES: number = 12;
+const chacha20_NONCE_BYTES: number = 12;
 
 export function xchacha20(
   out: Uint8Array,
@@ -30,27 +30,27 @@ export function xchacha20(
     return null;
   }
   
-  const chaCha20Key: Uint8Array = new Uint8Array(HCHACHA20_OUTPUT_BYTES);
+  const chacha20Key: Uint8Array = new Uint8Array(Hchacha20_OUTPUT_BYTES);
   
-  hChaCha20(chaCha20Key, key, nonce.subarray(0, HCHACHA20_NONCE_BYTES));
+  hchacha20(chacha20Key, key, nonce.subarray(0, Hchacha20_NONCE_BYTES));
   
-  const chaCha20Nonce: Uint8Array = new Uint8Array(CHACHA20_NONCE_BYTES);
+  const chacha20Nonce: Uint8Array = new Uint8Array(chacha20_NONCE_BYTES);
 
-  chaCha20Nonce.set(nonce.subarray(HCHACHA20_NONCE_BYTES, nonce.byteLength), 4);
+  chacha20Nonce.set(nonce.subarray(Hchacha20_NONCE_BYTES, nonce.byteLength), 4);
 
   const loopEnd: number = Math.floor(text.byteLength / 64);
   const rmd: number = text.byteLength % 64;
 
   const keyChunk: Uint8Array = new Uint8Array(64);
   const state: Uint32Array = new Uint32Array(16);
-  const initialState: Uint32Array = chaCha20InitState(chaCha20Key, chaCha20Nonce, counter);
+  const initialState: Uint32Array = chacha20InitState(chacha20Key, chacha20Nonce, counter);
 
   let textOffset: number = 0;
   let outOffset: number = 0;
   let i: number;
 
   for (i = 0; i < loopEnd; ++i, textOffset = i * 64, outOffset += 64) {
-    chaCha20Block(keyChunk, null, null, counter + i, state, initialState);
+    chacha20Block(keyChunk, null, null, counter + i, state, initialState);
     xor(
       text.subarray(textOffset, textOffset + 64),
       keyChunk,
@@ -61,7 +61,7 @@ export function xchacha20(
   }
 
   if (rmd) {
-    chaCha20Block(keyChunk, null, null, counter + loopEnd, state, initialState);
+    chacha20Block(keyChunk, null, null, counter + loopEnd, state, initialState);
     xor(
       text.subarray(loopEnd * 64, text.byteLength),
       keyChunk,

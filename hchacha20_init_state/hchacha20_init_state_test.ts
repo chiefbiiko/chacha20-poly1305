@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
-import { hChaCha20InitState } from "./hchacha20_init_state.ts";
+import { hchacha20InitState } from "./hchacha20_init_state.ts";
 
 const {
   readFileSync,
@@ -38,9 +38,9 @@ const testVectors: TestVector[] = loadTestVectors();
 testVectors.forEach(
   ({ key, nonce, expected }: TestVector, i: number): void => {
     test({
-      name: `hChaCha20InitState [${i}]`,
+      name: `hchacha20InitState [${i}]`,
       fn(): void {
-        assertEquals(hChaCha20InitState(key, nonce), expected);
+        assertEquals(hchacha20InitState(key, nonce), expected);
       }
     });
   }

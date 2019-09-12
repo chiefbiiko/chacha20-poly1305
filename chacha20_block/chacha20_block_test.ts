@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
-import { chaCha20Block } from "./chacha20_block.ts";
+import { chacha20Block } from "./chacha20_block.ts";
 
 const {
   readFileSync,
@@ -39,11 +39,11 @@ const testVectors: TestVector[] = loadTestVectors();
 testVectors.forEach(
   ({ key, nonce, counter, expected }: TestVector, i: number): void => {
     test({
-      name: `chaCha20Block [${i}]`,
+      name: `chacha20Block [${i}]`,
       fn(): void {
         const actual: Uint8Array = new Uint8Array(64);
 
-        chaCha20Block(actual, key, nonce, counter);
+        chacha20Block(actual, key, nonce, counter);
 
         assertEquals(actual, expected);
       }
@@ -54,13 +54,13 @@ testVectors.forEach(
 testVectors.forEach(
   ({ key, nonce, counter, expected }: TestVector, i: number): void => {
     test({
-      name: `chaCha20Block accepts external state [${i}]`,
+      name: `chacha20Block accepts external state [${i}]`,
       fn(): void {
         const actual: Uint8Array = new Uint8Array(64);
         const state: Uint32Array = new Uint32Array(16);
         let initialState: Uint32Array;
 
-        chaCha20Block(actual, key, nonce, counter, state, initialState);
+        chacha20Block(actual, key, nonce, counter, state, initialState);
 
         assertEquals(actual, expected);
       }

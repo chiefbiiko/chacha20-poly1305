@@ -1,6 +1,6 @@
 import { fourLittleEndianBytesToNumber } from "./../util/util.ts";
 
-export function chaCha20InitState(
+export function chacha20InitState(
   key: Uint8Array,
   nonce: Uint8Array,
   counter: number

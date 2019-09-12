@@ -1,6 +1,6 @@
 import { rotateLeft } from "./../util/util.ts";
 
-export function chaCha20QuarterRound(
+export function chacha20QuarterRound(
   state: Uint32Array,
   a: number,
   b: number,

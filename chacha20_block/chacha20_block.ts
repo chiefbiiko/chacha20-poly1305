@@ -1,8 +1,8 @@
-import { chaCha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
-import { chaCha20QuarterRound } from "./../chacha20_quarter_round/chacha20_quarter_round.ts";
+import { chacha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
+import { chacha20QuarterRound } from "./../chacha20_quarter_round/chacha20_quarter_round.ts";
 import { numberToLittleEndianBytes } from "./../util/util.ts";
 
-export function chaCha20Block(
+export function chacha20Block(
   out: Uint8Array,
   key: Uint8Array,
   nonce: Uint8Array,
@@ -15,7 +15,7 @@ export function chaCha20Block(
   }
 
   if (!initialState) {
-    initialState = chaCha20InitState(key, nonce, counter);
+    initialState = chacha20InitState(key, nonce, counter);
   } else {
     initialState[12] = counter & 0xffffffff;
   }
@@ -25,14 +25,14 @@ export function chaCha20Block(
   let i: number;
 
   for (i = 0; i < 10; ++i) {
-    chaCha20QuarterRound(state, 0, 4, 8, 12);
-    chaCha20QuarterRound(state, 1, 5, 9, 13);
-    chaCha20QuarterRound(state, 2, 6, 10, 14);
-    chaCha20QuarterRound(state, 3, 7, 11, 15);
-    chaCha20QuarterRound(state, 0, 5, 10, 15);
-    chaCha20QuarterRound(state, 1, 6, 11, 12);
-    chaCha20QuarterRound(state, 2, 7, 8, 13);
-    chaCha20QuarterRound(state, 3, 4, 9, 14);
+    chacha20QuarterRound(state, 0, 4, 8, 12);
+    chacha20QuarterRound(state, 1, 5, 9, 13);
+    chacha20QuarterRound(state, 2, 6, 10, 14);
+    chacha20QuarterRound(state, 3, 7, 11, 15);
+    chacha20QuarterRound(state, 0, 5, 10, 15);
+    chacha20QuarterRound(state, 1, 6, 11, 12);
+    chacha20QuarterRound(state, 2, 7, 8, 13);
+    chacha20QuarterRound(state, 3, 4, 9, 14);
   }
 
   for (i = 0; i < 16; ++i) {
