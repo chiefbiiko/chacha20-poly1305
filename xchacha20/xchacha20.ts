@@ -1,12 +1,12 @@
 import { chacha20Block } from "./../chacha20_block/chacha20_block.ts";
 import { chacha20InitState } from "./../chacha20_init_state/chacha20_init_state.ts";
-import { hchacha20, NONCE_BYTES as Hchacha20_NONCE_BYTES, OUTPUT_BYTES as Hchacha20_OUTPUT_BYTES } from "./../hchacha20/hchacha20.ts";
+import { hchacha20, NONCE_BYTES as HCHACHA20_NONCE_BYTES, OUTPUT_BYTES as HCHACHA20_OUTPUT_BYTES } from "./../hchacha20/hchacha20.ts";
 import { xor } from "./../util/util.ts";
 
 export const KEY_BYTES: number = 32;
 export const NONCE_BYTES: number = 24;
 
-const chacha20_NONCE_BYTES: number = 12;
+const CHACHA20_NONCE_BYTES: number = 12;
 
 export function xchacha20(
   out: Uint8Array,
@@ -30,13 +30,13 @@ export function xchacha20(
     return null;
   }
   
-  const chacha20Key: Uint8Array = new Uint8Array(Hchacha20_OUTPUT_BYTES);
+  const chacha20Key: Uint8Array = new Uint8Array(HCHACHA20_OUTPUT_BYTES);
   
-  hchacha20(chacha20Key, key, nonce.subarray(0, Hchacha20_NONCE_BYTES));
+  hchacha20(chacha20Key, key, nonce.subarray(0, HCHACHA20_NONCE_BYTES));
   
-  const chacha20Nonce: Uint8Array = new Uint8Array(chacha20_NONCE_BYTES);
+  const chacha20Nonce: Uint8Array = new Uint8Array(CHACHA20_NONCE_BYTES);
 
-  chacha20Nonce.set(nonce.subarray(Hchacha20_NONCE_BYTES, nonce.byteLength), 4);
+  chacha20Nonce.set(nonce.subarray(HCHACHA20_NONCE_BYTES, nonce.byteLength), 4);
 
   const loopEnd: number = Math.floor(text.byteLength / 64);
   const rmd: number = text.byteLength % 64;
@@ -71,6 +71,7 @@ export function xchacha20(
     );
   }
 
+  chacha20Key.fill(0x00, 0, chacha20Key.byteLength);
   keyChunk.fill(0x00, 0, keyChunk.byteLength);
   state.fill(0, 0, state.byteLength);
   initialState.fill(0, 0, initialState.byteLength);
