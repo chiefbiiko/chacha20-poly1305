@@ -8,43 +8,61 @@ const { readFileSync } = Deno;
 interface TestVector {
   key: Uint8Array;
   nonce: Uint8Array;
+  counter: number;
   plaintext: Uint8Array;
-  expected: Uint8Array;
+  ciphertext: Uint8Array;
 }
 
 function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./aead_xchacha20_poly1305_test_vectors.json")
+      readFileSync("./xchacha20_cipher_test_vectors.json")
     )
   ).map(
-    (testVector: { [key: string]: string }): TestVector => ({
+    (testVector: { [key: string]: any }): TestVector => ({
       key: encode(testVector.key, "hex"),
       nonce: encode(testVector.nonce, "hex"),
-      plaintext: testVector.plaintext ? encode(testVector.plaintext, "hex") : new Uint8Array(0),
-      expected: encode(testVector.expected, "hex")
+      counter: testVector.counter,
+      plaintext: encode(testVector.plaintext, "hex"),
+      ciphertext: encode(testVector.ciphertext, "hex")
     })
   );
 }
 
-// See https://github.com/jedisct1/libsodium/blob/master/test/default/xchacha20.c
+// See https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-01#appendix-A.3.2
 const testVectors: TestVector[] = loadTestVectors();
 
-testVectors.slice(0, 1).forEach(
+testVectors.forEach(
   (
-    { key, nonce, plaintext, expected }: TestVector,
+    { key, nonce, counter, plaintext, ciphertext }: TestVector,
     i: number
   ): void => {
     test({
-      name: `xChaCha20Cipher [${i}]`,
+      name: `xChaCha20Cipher encryption [${i}]`,
       fn(): void {
-        const actual: {
-          ciphertext: Uint8Array;
-          tag: Uint8Array;
-          aad: Uint8Array;
-        } = xChaCha20Cipher(key, nonce, plaintext, new Uint8Array(0));
+        const out: Uint8Array = new Uint8Array(plaintext.byteLength);
+        
+        xChaCha20Cipher(out, key, nonce, counter, plaintext);
 
-        assertEquals(actual.ciphertext, expected);
+        assertEquals(out, ciphertext);
+      }
+    });
+  }
+);
+
+testVectors.forEach(
+  (
+    { key, nonce, counter, plaintext, ciphertext }: TestVector,
+    i: number
+  ): void => {
+    test({
+      name: `xChaCha20Cipher decryption [${i}]`,
+      fn(): void {
+        const out: Uint8Array = new Uint8Array(ciphertext.byteLength);
+
+        xChaCha20Cipher(out, key, nonce, counter, ciphertext);
+
+        assertEquals(out, plaintext);
       }
     });
   }
