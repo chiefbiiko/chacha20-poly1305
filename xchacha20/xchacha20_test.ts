@@ -1,6 +1,6 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { xChaCha20 } from "./xchacha20.ts";
+import { xchacha20 } from "./xchacha20.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 
 const {
@@ -45,11 +45,11 @@ testVectors.forEach(
     i: number
   ): void => {
     test({
-      name: `xChaCha20 encryption [${i}]`,
+      name: `xchacha20 encryption [${i}]`,
       fn(): void {
         const out: Uint8Array = new Uint8Array(plaintext.byteLength);
         
-        xChaCha20(out, key, nonce, counter, plaintext);
+        xchacha20(out, key, nonce, counter, plaintext);
 
         assertEquals(out, ciphertext);
       }
@@ -63,11 +63,11 @@ testVectors.forEach(
     i: number
   ): void => {
     test({
-      name: `xChaCha20 decryption [${i}]`,
+      name: `xchacha20 decryption [${i}]`,
       fn(): void {
         const out: Uint8Array = new Uint8Array(ciphertext.byteLength);
 
-        xChaCha20(out, key, nonce, counter, ciphertext);
+        xchacha20(out, key, nonce, counter, ciphertext);
 
         assertEquals(out, plaintext);
       }

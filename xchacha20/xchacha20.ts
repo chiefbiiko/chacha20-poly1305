@@ -8,7 +8,7 @@ export const NONCE_BYTES: number = 24;
 
 const CHACHA20_NONCE_BYTES: number = 12;
 
-export function xChaCha20(
+export function xchacha20(
   out: Uint8Array,
   key: Uint8Array,
   nonce: Uint8Array,
