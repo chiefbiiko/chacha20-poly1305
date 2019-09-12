@@ -1,6 +1,6 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { xChaCha20Cipher } from "./xchacha20_cipher.ts";
+import { xChaCha20 } from "./xchacha20.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 
 const { readFileSync } = Deno;
@@ -16,7 +16,7 @@ interface TestVector {
 function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./xchacha20_cipher_test_vectors.json")
+      readFileSync("./xchacha20_test_vectors.json")
     )
   ).map(
     (testVector: { [key: string]: any }): TestVector => ({
@@ -38,11 +38,11 @@ testVectors.forEach(
     i: number
   ): void => {
     test({
-      name: `xChaCha20Cipher encryption [${i}]`,
+      name: `xChaCha20 encryption [${i}]`,
       fn(): void {
         const out: Uint8Array = new Uint8Array(plaintext.byteLength);
         
-        xChaCha20Cipher(out, key, nonce, counter, plaintext);
+        xChaCha20(out, key, nonce, counter, plaintext);
 
         assertEquals(out, ciphertext);
       }
@@ -56,11 +56,11 @@ testVectors.forEach(
     i: number
   ): void => {
     test({
-      name: `xChaCha20Cipher decryption [${i}]`,
+      name: `xChaCha20 decryption [${i}]`,
       fn(): void {
         const out: Uint8Array = new Uint8Array(ciphertext.byteLength);
 
-        xChaCha20Cipher(out, key, nonce, counter, ciphertext);
+        xChaCha20(out, key, nonce, counter, ciphertext);
 
         assertEquals(out, plaintext);
       }

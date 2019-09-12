@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
-import { aeadChaCha20Poly1305Construct } from "./aead_chacha20_poly1305_construct.ts";
+import { ChaCha20Poly1305Construct } from "./chacha20_poly1305_construct.ts";
 
 const {
   readFileSync,
@@ -22,7 +22,7 @@ function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(
       readFileSync(
-        `${DIRNAME}/aead_chacha20_poly1305_construct_test_vectors.json`
+        `${DIRNAME}/chacha20_poly1305_construct_test_vectors.json`
       )
     )
   ).map(
@@ -37,9 +37,9 @@ function loadTestVectors(): TestVector[] {
 loadTestVectors().forEach(
   ({ ciphertext, aad, expected }: TestVector, i: number): void => {
     test({
-      name: `aeadChaCha20Poly1305Construct [${i}]`,
+      name: `ChaCha20Poly1305Construct [${i}]`,
       fn(): void {
-        assertEquals(aeadChaCha20Poly1305Construct(ciphertext, aad), expected);
+        assertEquals(ChaCha20Poly1305Construct(ciphertext, aad), expected);
       }
     });
   }

@@ -1,8 +1,8 @@
-import { chaCha20Cipher } from "./chacha20_cipher/chacha20_cipher.ts";
+import { chaCha20 } from "./chacha20/chacha20.ts";
 import { poly1305KeyGen } from "./poly1305_key_gen/poly1305_key_gen.ts";
 import { poly1305 } from "./poly1305/poly1305.ts";
 import { constantTimeEqual } from "./constant_time_equal/constant_time_equal.ts";
-import { aeadChaCha20Poly1305Construct } from "./aead_chacha20_poly1305_construct/aead_chacha20_poly1305_construct.ts";
+import { ChaCha20Poly1305Construct } from "./chacha20_poly1305_construct/chacha20_poly1305_construct.ts";
 import { hChaCha20 } from "./hchacha20/hchacha20.ts";
 
 export const KEY_BYTES: number = 32;
@@ -13,7 +13,7 @@ export const AAD_BYTES_MAX: bigint = 18446744073709551615n;
 export const TAG_BYTES: number = 16;
 
 // TODO
-export function aeadXchaCha20Poly1305Seal(
+export function XchaCha20Poly1305Seal(
   key: Uint8Array,
   nonce: Uint8Array,
   plaintext: Uint8Array,
@@ -49,9 +49,9 @@ export function aeadXchaCha20Poly1305Seal(
 
   const ciphertext: Uint8Array = new Uint8Array(plaintext.byteLength);
 
-  chaCha20Cipher(ciphertext, subKey, shortNonce, 1, plaintext);
+  chaCha20(ciphertext, subKey, shortNonce, 1, plaintext);
 
-  const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
+  const pac: Uint8Array = ChaCha20Poly1305Construct(ciphertext, aad);
 
   const tag: Uint8Array = poly1305(otk, pac);
 
@@ -63,7 +63,7 @@ export function aeadXchaCha20Poly1305Seal(
   return { ciphertext, tag, aad };
 }
 
-export function aeadXchaCha20Poly1305Open(
+export function XchaCha20Poly1305Open(
   key: Uint8Array,
   nonce: Uint8Array,
   ciphertext: Uint8Array,
@@ -98,7 +98,7 @@ export function aeadXchaCha20Poly1305Open(
   }
 
   // const otk: Uint8Array = poly1305KeyGen(key, nonce);
-  // const pac: Uint8Array = aeadChaCha20Poly1305Construct(ciphertext, aad);
+  // const pac: Uint8Array = ChaCha20Poly1305Construct(ciphertext, aad);
   // const tag: Uint8Array = poly1305(otk, pac);
   //
   // otk.fill(0x00, 0, otk.byteLength);
@@ -109,7 +109,7 @@ export function aeadXchaCha20Poly1305Open(
   //
   // const plaintext: Uint8Array = new Uint8Array(ciphertext.byteLength);
   //
-  // chaCha20Cipher(plaintext, key, nonce, 1, ciphertext)
+  // chaCha20(plaintext, key, nonce, 1, ciphertext)
 
   // return plaintext;
 }

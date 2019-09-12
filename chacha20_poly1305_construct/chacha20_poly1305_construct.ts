@@ -1,7 +1,7 @@
 import { rightZeroPad16 } from "./../right_zero_pad16/right_zero_pad16.ts";
 import { numberToLittleEndianBytes } from "./../util/util.ts";
 
-export function aeadChaCha20Poly1305Construct(
+export function ChaCha20Poly1305Construct(
   ciphertext: Uint8Array,
   aad: Uint8Array
 ): Uint8Array {

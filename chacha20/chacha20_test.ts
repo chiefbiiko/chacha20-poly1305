@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
-import { chaCha20Cipher } from "./chacha20_cipher.ts";
+import { chaCha20 } from "./chacha20.ts";
 
 const {
   readFileSync,
@@ -23,7 +23,7 @@ interface TestVector {
 function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(
-      readFileSync(`${DIRNAME}/chacha20_cipher_test_vectors.json`)
+      readFileSync(`${DIRNAME}/chacha20_test_vectors.json`)
     )
   ).map(
     (testVector: { [key: string]: any }): TestVector => ({
@@ -48,7 +48,7 @@ testVectors.forEach(
       fn(): void {
         const ciphertext: Uint8Array = new Uint8Array(plaintext.byteLength);
 
-        chaCha20Cipher(ciphertext, key, nonce, counter, plaintext)
+        chaCha20(ciphertext, key, nonce, counter, plaintext)
 
         assertEquals(ciphertext, expected);
       }
@@ -66,7 +66,7 @@ testVectors.forEach(
       fn(): void {
         const plaintext: Uint8Array = new Uint8Array(ciphertext.byteLength);
 
-        chaCha20Cipher(plaintext, key, nonce, counter, ciphertext)
+        chaCha20(plaintext, key, nonce, counter, ciphertext)
 
         assertEquals(plaintext, expected);
       }
