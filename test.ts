@@ -12,5 +12,7 @@ import "./poly1305/poly1305_test.ts";
 import "./poly1305_msg_block_to_big_int/poly1305_msg_block_to_big_int_test.ts";
 import "./chacha20_poly1305_construct/chacha20_poly1305_construct_test.ts";
 import "./chacha20_poly1305_test.ts";
+import "./hchacha20/hchacha20_test.ts";
+import "./xchacha20/xchacha20_test.ts";
 
 runIfMain(import.meta, { parallel: true });

@@ -3,7 +3,14 @@ import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { xChaCha20 } from "./xchacha20.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
 
-const { readFileSync } = Deno;
+const {
+  readFileSync,
+  platform: { os }
+} = Deno;
+
+const DIRNAME =
+  (os !== "win" ? "/" : "") +
+  import.meta.url.replace(/^file:\/+|\/[^/]+$/g, "");
 
 interface TestVector {
   key: Uint8Array;
@@ -16,7 +23,7 @@ interface TestVector {
 function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(
-      readFileSync("./xchacha20_test_vectors.json")
+      readFileSync(`${DIRNAME}/xchacha20_test_vectors.json`)
     )
   ).map(
     (testVector: { [key: string]: any }): TestVector => ({
