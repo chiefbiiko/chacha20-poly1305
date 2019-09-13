@@ -1,10 +1,98 @@
-export {
-  KEY_BYTES,
-  NONCE_BYTES,
-  PLAINTEXT_BYTES_MAX,
-  CIPHERTEXT_BYTES_MAX,
-  AAD_BYTES_MAX,
-  TAG_BYTES,
-  chacha20Poly1305Seal as seal,
-  chacha20Poly1305Open as open
-} from "./chacha20_poly1305.ts";
+import { chacha20 } from "https://denopkg.com/chiefbiiko/chacha20/mod.ts";
+import { poly1305 } from "https://denopkg.com/chiefbiiko/poly1305/mod.ts";
+import { poly1305KeyGen } from "./poly1305_keygen/poly1305_keygen.ts";
+import { constantTimeEqual } from "./constant_time_equal/constant_time_equal.ts";
+import { chacha20poly1305Construct } from "./chacha20_poly1305_construct/chacha20_poly1305_construct.ts";
+
+export const KEY_BYTES: number = 32;
+export const NONCE_BYTES: number = 12;
+export const PLAINTEXT_BYTES_MAX: bigint = 274877906880n;
+export const CIPHERTEXT_BYTES_MAX: bigint = 274877906896n;
+export const AAD_BYTES_MAX: bigint = 18446744073709551615n;
+export const TAG_BYTES: number = 16;
+
+export function chacha20poly1305Seal(
+  key: Uint8Array,
+  nonce: Uint8Array,
+  plaintext: Uint8Array,
+  aad: Uint8Array
+): { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array } {
+  if (key.byteLength !== KEY_BYTES) {
+    return null;
+  }
+
+  if (nonce.byteLength !== NONCE_BYTES) {
+    return null;
+  }
+
+  if (plaintext.byteLength > PLAINTEXT_BYTES_MAX) {
+    return null;
+  }
+
+  if (aad.byteLength > AAD_BYTES_MAX) {
+    return null;
+  }
+
+  const ciphertext: Uint8Array = new Uint8Array(plaintext.byteLength);
+  
+  const tag: Uint8Array = new Uint8Array(TAG_BYTES);
+
+  const otk: Uint8Array = poly1305KeyGen(key, nonce);
+
+  chacha20(ciphertext, key, nonce, 1, plaintext);
+
+  const pac: Uint8Array = chacha20poly1305Construct(ciphertext, aad);
+
+  poly1305(tag, otk, pac);
+
+  otk.fill(0x00, 0, otk.byteLength);
+
+  return { ciphertext, tag, aad };
+}
+
+export function chacha20poly1305Open(
+  key: Uint8Array,
+  nonce: Uint8Array,
+  ciphertext: Uint8Array,
+  aad: Uint8Array,
+  receivedTag: Uint8Array
+): Uint8Array {
+  if (key.byteLength !== KEY_BYTES) {
+    return null;
+  }
+
+  if (nonce.byteLength !== NONCE_BYTES) {
+    return null;
+  }
+
+  if (ciphertext.byteLength > CIPHERTEXT_BYTES_MAX) {
+    return null;
+  }
+
+  if (aad.byteLength > AAD_BYTES_MAX) {
+    return null;
+  }
+
+  if (receivedTag.byteLength !== TAG_BYTES) {
+    return null;
+  }
+
+  const tag: Uint8Array = new Uint8Array(TAG_BYTES);
+
+  const otk: Uint8Array = poly1305KeyGen(key, nonce);
+  const pac: Uint8Array = chacha20poly1305Construct(ciphertext, aad);
+  
+  poly1305(tag, otk, pac);
+
+  otk.fill(0x00, 0, otk.byteLength);
+
+  if (!constantTimeEqual(receivedTag, tag)) {
+    return null;
+  }
+
+  const plaintext: Uint8Array = new Uint8Array(ciphertext.byteLength);
+
+  chacha20(plaintext, key, nonce, 1, ciphertext);
+
+  return plaintext;
+}

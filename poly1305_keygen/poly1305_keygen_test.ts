@@ -1,7 +1,7 @@
 import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
-import { hchacha20InitState } from "./hchacha20_init_state.ts";
+import { poly1305KeyGen } from "./poly1305_keygen.ts";
 
 const {
   readFileSync,
@@ -15,35 +15,35 @@ const DIRNAME =
 interface TestVector {
   key: Uint8Array;
   nonce: Uint8Array;
-  expected: Uint32Array;
+  otk: Uint8Array;
 }
 
 function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(
-      readFileSync(`${DIRNAME}/hchacha20_init_state_test_vectors.json`)
+      readFileSync(`${DIRNAME}/poly1305_keygen_test_vectors.json`)
     )
   ).map(
-    (testVector: { [key: string]: any }): TestVector => ({
+    (testVector: { [key: string]: string }): TestVector => ({
       key: encode(testVector.key, "hex"),
       nonce: encode(testVector.nonce, "hex"),
-      expected: Uint32Array.from(testVector.expected)
+      otk: encode(testVector.otk, "hex")
     })
   );
 }
 
-// See https://tools.ietf.org/html/draft-irtf-cfrg-xchacha-01#section-2.2.1
+// See https://tools.ietf.org/html/rfc8439
 const testVectors: TestVector[] = loadTestVectors();
 
 testVectors.forEach(
-  ({ key, nonce, expected }: TestVector, i: number): void => {
+  ({ key, nonce, otk }: TestVector, i: number): void => {
     test({
-      name: `hchacha20InitState [${i}]`,
+      name: `poly1305KeyGen [${i}]`,
       fn(): void {
-        assertEquals(hchacha20InitState(key, nonce), expected);
+        assertEquals(poly1305KeyGen(key, nonce), otk);
       }
     });
   }
 );
 
-runIfMain(import.meta, { parallel: true });
+runIfMain(import.meta);

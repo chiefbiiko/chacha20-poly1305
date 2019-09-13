@@ -4,4 +4,4 @@ install:
   - ps: iex (iwr https://deno.land/x/install/install.ps1)
 
 test_script: 
-  - cmd: deno run --allow-read --allow-hrtime ./test.ts
+  - cmd: deno run --allow-read ./test.ts
