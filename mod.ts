@@ -11,7 +11,7 @@ export const CIPHERTEXT_BYTES_MAX: bigint = 274877906896n;
 export const AAD_BYTES_MAX: bigint = 18446744073709551615n;
 export const TAG_BYTES: number = 16;
 
-export function chacha20poly1305Seal(
+export function seal(
   key: Uint8Array,
   nonce: Uint8Array,
   plaintext: Uint8Array,
@@ -50,7 +50,7 @@ export function chacha20poly1305Seal(
   return { ciphertext, tag, aad };
 }
 
-export function chacha20poly1305Open(
+export function open(
   key: Uint8Array,
   nonce: Uint8Array,
   ciphertext: Uint8Array,
