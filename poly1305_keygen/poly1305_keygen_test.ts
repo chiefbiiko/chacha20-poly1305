@@ -5,7 +5,7 @@ import { poly1305KeyGen } from "./poly1305_keygen.ts";
 
 const {
   readFileSync,
-  platform: { os }
+  build: { os }
 } = Deno;
 
 const DIRNAME =

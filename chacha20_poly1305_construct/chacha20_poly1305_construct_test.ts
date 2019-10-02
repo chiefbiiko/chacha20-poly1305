@@ -5,7 +5,7 @@ import { chacha20poly1305Construct } from "./chacha20_poly1305_construct.ts";
 
 const {
   readFileSync,
-  platform: { os }
+  build: { os }
 } = Deno;
 
 const DIRNAME =
