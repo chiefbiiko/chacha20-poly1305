@@ -86,7 +86,7 @@ export function open(
 
   otk.fill(0x00, 0, otk.byteLength);
 
-  if (!constantTimeEqual(receivedTag, tag)) {
+  if (!constantTimeEqual(receivedTag, tag, TAG_BYTES)) {
     return null;
   }
 

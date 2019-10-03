@@ -1,7 +1,7 @@
-export function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
-  let diff: number = a.byteLength === b.byteLength ? 0 : 1;
+export function constantTimeEqual(a: Uint8Array, b: Uint8Array, length: number): boolean {
+  let diff: number = 0;
 
-  for (let i: number = Math.max(a.byteLength, b.byteLength) - 1; i >= 0; --i) {
+  for (let i: number = 0; i < length; ++i) {
     diff |= a[i] ^ b[i];
   }
 
