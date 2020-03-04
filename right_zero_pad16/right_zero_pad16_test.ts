@@ -1,8 +1,7 @@
-import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { assert, assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { assert, assertEquals } from "./../test_deps.ts";
 import { rightZeroPad16 } from "./right_zero_pad16.ts";
 
-test({
+Deno.test({
   name: "rightZeroPad16",
   fn(): void {
     const x: Uint8Array = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
@@ -15,5 +14,3 @@ test({
     );
   }
 });
-
-runIfMain(import.meta);

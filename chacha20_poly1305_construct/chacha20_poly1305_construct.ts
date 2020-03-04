@@ -7,8 +7,8 @@ export function chacha20poly1305Construct(
 ): Uint8Array {
   const paddedCiphertext: Uint8Array = rightZeroPad16(ciphertext);
   const paddedAad: Uint8Array = rightZeroPad16(aad);
-  const paddedTotalLength: number =
-    paddedCiphertext.byteLength + paddedAad.byteLength;
+  const paddedTotalLength: number = paddedCiphertext.byteLength +
+    paddedAad.byteLength;
   const pac: Uint8Array = new Uint8Array(paddedTotalLength + 16);
 
   pac.set(paddedAad, 0);

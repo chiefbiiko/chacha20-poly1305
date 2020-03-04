@@ -1,5 +1,4 @@
-import { chacha20 } from "https://denopkg.com/chiefbiiko/chacha20/mod.ts";
-import { poly1305 } from "https://denopkg.com/chiefbiiko/poly1305/mod.ts";
+import { chacha20, poly1305 } from "./deps.ts";
 import { poly1305KeyGen } from "./poly1305_keygen/poly1305_keygen.ts";
 import { constantTimeEqual } from "./constant_time_equal/constant_time_equal.ts";
 import { chacha20poly1305Construct } from "./chacha20_poly1305_construct/chacha20_poly1305_construct.ts";
@@ -16,25 +15,25 @@ export function seal(
   nonce: Uint8Array,
   plaintext: Uint8Array,
   aad: Uint8Array
-): { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array } {
+): { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array; } {
   if (key.byteLength !== KEY_BYTES) {
-    return null;
+    return null!;
   }
 
   if (nonce.byteLength !== NONCE_BYTES) {
-    return null;
+    return null!;
   }
 
   if (plaintext.byteLength > PLAINTEXT_BYTES_MAX) {
-    return null;
+    return null!;
   }
 
   if (aad.byteLength > AAD_BYTES_MAX) {
-    return null;
+    return null!;
   }
 
   const ciphertext: Uint8Array = new Uint8Array(plaintext.byteLength);
-  
+
   const tag: Uint8Array = new Uint8Array(TAG_BYTES);
 
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
@@ -58,36 +57,36 @@ export function open(
   receivedTag: Uint8Array
 ): Uint8Array {
   if (key.byteLength !== KEY_BYTES) {
-    return null;
+    return null!;
   }
 
   if (nonce.byteLength !== NONCE_BYTES) {
-    return null;
+    return null!;
   }
 
   if (ciphertext.byteLength > CIPHERTEXT_BYTES_MAX) {
-    return null;
+    return null!;
   }
 
   if (aad.byteLength > AAD_BYTES_MAX) {
-    return null;
+    return null!;
   }
 
   if (receivedTag.byteLength !== TAG_BYTES) {
-    return null;
+    return null!;
   }
 
   const tag: Uint8Array = new Uint8Array(TAG_BYTES);
 
   const otk: Uint8Array = poly1305KeyGen(key, nonce);
   const pac: Uint8Array = chacha20poly1305Construct(ciphertext, aad);
-  
+
   poly1305(tag, otk, pac);
 
   otk.fill(0x00, 0, otk.byteLength);
 
   if (!constantTimeEqual(receivedTag, tag, TAG_BYTES)) {
-    return null;
+    return null!;
   }
 
   const plaintext: Uint8Array = new Uint8Array(ciphertext.byteLength);

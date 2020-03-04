@@ -1,15 +1,8 @@
-import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { encode } from "https://denopkg.com/chiefbiiko/std-encoding/mod.ts";
+import { assertEquals, encode } from "./test_deps.ts";
 import {
   seal,
   open
 } from "./mod.ts";
-
-import "./chacha20_poly1305_construct/chacha20_poly1305_construct_test.ts";
-import "./constant_time_equal/constant_time_equal_test.ts";
-import "./poly1305_keygen/poly1305_keygen_test.ts";
-import "./right_zero_pad16/right_zero_pad16_test.ts";
 
 interface TestVector {
   key: Uint8Array;
@@ -24,7 +17,7 @@ function loadTestVectors(): TestVector[] {
   return JSON.parse(
     new TextDecoder().decode(Deno.readFileSync("./test_vectors.json"))
   ).map(
-    (testVector: { [key: string]: string }): TestVector => ({
+    (testVector: { [key: string]: string; }): TestVector => ({
       key: encode(testVector.key, "hex"),
       nonce: encode(testVector.nonce, "hex"),
       plaintext: encode(testVector.plaintext, "hex"),
@@ -43,7 +36,7 @@ testVectors.forEach(
     { key, nonce, plaintext, aad, ciphertext, tag }: TestVector,
     i: number
   ): void => {
-    test({
+    Deno.test({
       name: `seal [${i}]`,
       fn(): void {
         const actual: {
@@ -64,7 +57,7 @@ testVectors.forEach(
     { key, nonce, plaintext, aad, ciphertext, tag }: TestVector,
     i: number
   ): void => {
-    test({
+    Deno.test({
       name: `open [${i}]`,
       fn(): void {
         assertEquals(
@@ -78,7 +71,7 @@ testVectors.forEach(
 
 testVectors.forEach(
   ({ key, nonce, aad, ciphertext }: TestVector, i: number): void => {
-    test({
+    Deno.test({
       name: `chacha20poly1305 nulls if not authenticated [${i}]`,
       fn(): void {
         assertEquals(
@@ -92,7 +85,7 @@ testVectors.forEach(
 
 testVectors.forEach(
   ({ key, nonce, plaintext, aad }: TestVector, i: number): void => {
-    test({
+    Deno.test({
       name: `seal nulls if the key length is invalid [${i}]`,
       fn(): void {
         assertEquals(
@@ -106,7 +99,7 @@ testVectors.forEach(
 
 testVectors.forEach(
   ({ key, nonce, plaintext, aad }: TestVector, i: number): void => {
-    test({
+    Deno.test({
       name: `seal nulls if the nonce length is invalid [${i}]`,
       fn(): void {
         assertEquals(
@@ -120,7 +113,7 @@ testVectors.forEach(
 
 testVectors.forEach(
   ({ key, nonce, ciphertext, aad, tag }: TestVector, i: number): void => {
-    test({
+    Deno.test({
       name: `open nulls if the key length is invalid [${i}]`,
       fn(): void {
         assertEquals(
@@ -134,7 +127,7 @@ testVectors.forEach(
 
 testVectors.forEach(
   ({ key, nonce, ciphertext, aad, tag }: TestVector, i: number): void => {
-    test({
+    Deno.test({
       name: `open nulls if the nonce length is invalid [${i}]`,
       fn(): void {
         assertEquals(
@@ -145,5 +138,3 @@ testVectors.forEach(
     });
   }
 );
-
-runIfMain(import.meta, { parallel: true });

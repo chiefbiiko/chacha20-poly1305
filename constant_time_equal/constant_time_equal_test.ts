@@ -1,8 +1,7 @@
-import { test, runIfMain } from "https://deno.land/std/testing/mod.ts";
-import { assert } from "https://deno.land/std/testing/asserts.ts";
+import { assert } from "./../test_deps.ts";
 import { constantTimeEqual } from "./constant_time_equal.ts";
 
-test({
+Deno.test({
   name: "constantTimeEqual true positive",
   fn(): void {
     const a: Uint8Array = new Uint8Array([1, 2, 3]);
@@ -12,7 +11,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "constantTimeEqual true negative",
   fn(): void {
     const a: Uint8Array = new Uint8Array([1, 2, 3]);
@@ -22,7 +21,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "constantTimeEqual behaves undefined if length != buf.len",
   fn(): void {
     const a: Uint8Array = new Uint8Array([1, 2, 0]);
@@ -33,5 +32,3 @@ test({
     assert(!constantTimeEqual(b, c, 3));
   }
 });
-
-runIfMain(import.meta, { parallel: true });
