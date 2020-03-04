@@ -15,21 +15,21 @@ export function seal(
   nonce: Uint8Array,
   plaintext: Uint8Array,
   aad: Uint8Array
-): { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array; } {
+): null | { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array; } {
   if (key.byteLength !== KEY_BYTES) {
-    return null!;
+    return null;
   }
 
   if (nonce.byteLength !== NONCE_BYTES) {
-    return null!;
+    return null;
   }
 
   if (plaintext.byteLength > PLAINTEXT_BYTES_MAX) {
-    return null!;
+    return null;
   }
 
   if (aad.byteLength > AAD_BYTES_MAX) {
-    return null!;
+    return null;
   }
 
   const ciphertext: Uint8Array = new Uint8Array(plaintext.byteLength);
@@ -55,25 +55,25 @@ export function open(
   ciphertext: Uint8Array,
   aad: Uint8Array,
   receivedTag: Uint8Array
-): Uint8Array {
+): null | Uint8Array {
   if (key.byteLength !== KEY_BYTES) {
-    return null!;
+    return null;
   }
 
   if (nonce.byteLength !== NONCE_BYTES) {
-    return null!;
+    return null;
   }
 
   if (ciphertext.byteLength > CIPHERTEXT_BYTES_MAX) {
-    return null!;
+    return null;
   }
 
   if (aad.byteLength > AAD_BYTES_MAX) {
-    return null!;
+    return null;
   }
 
   if (receivedTag.byteLength !== TAG_BYTES) {
-    return null!;
+    return null;
   }
 
   const tag: Uint8Array = new Uint8Array(TAG_BYTES);
@@ -86,7 +86,7 @@ export function open(
   otk.fill(0x00, 0, otk.byteLength);
 
   if (!constantTimeEqual(receivedTag, tag, TAG_BYTES)) {
-    return null!;
+    return null;
   }
 
   const plaintext: Uint8Array = new Uint8Array(ciphertext.byteLength);

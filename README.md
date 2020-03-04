@@ -19,7 +19,7 @@ export function seal(
   nonce: Uint8Array,
   plaintext: Uint8Array,
   aad: Uint8Array
-): { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array };
+): null | { ciphertext: Uint8Array; tag: Uint8Array; aad: Uint8Array };
 
 export function open(
   key: Uint8Array,
@@ -27,7 +27,7 @@ export function open(
   ciphertext: Uint8Array,
   aad: Uint8Array,
   receivedTag: Uint8Array
-): Uint8Array
+): null | Uint8Array;
 ```
 
 ## License

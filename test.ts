@@ -39,14 +39,14 @@ testVectors.forEach(
     Deno.test({
       name: `seal [${i}]`,
       fn(): void {
-        const actual: {
+        const actual: null | {
           ciphertext: Uint8Array;
           tag: Uint8Array;
           aad: Uint8Array;
         } = seal(key, nonce, plaintext, aad);
 
-        assertEquals(actual.ciphertext, ciphertext);
-        assertEquals(actual.tag, tag);
+        assertEquals(actual!.ciphertext, ciphertext);
+        assertEquals(actual!.tag, tag);
       }
     });
   }
